@@ -1,7 +1,8 @@
 # Saga
+
 An AI-powered choose your own adventure simulator.
 
-### Features
+## Features
 
 - React/Typescript front end
   - Main menu
@@ -33,6 +34,7 @@ An AI-powered choose your own adventure simulator.
   - Integration testing?
   - E2E?
 
-### Additional
+## Additional
+
 - Player classes / stats that evolve
 - NPCs controlled by AI
