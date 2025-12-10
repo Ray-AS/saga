@@ -6,21 +6,22 @@ from configs import MODEL
 
 
 def main():
-    client = Groq(
-        api_key=os.environ.get('GROQ_API_KEY'),
-    )
+    # client = Groq(
+    #     api_key=os.environ.get('GROQ_API_KEY'),
+    # )
 
-    chat_completion = client.chat.completions.create(
-        messages=[
-            {
-                'role': 'user',
-                'content': 'Explain the importance of fast language models',
-            }
-        ],
-        model=MODEL,
-    )
+    # chat_completion = client.chat.completions.create(
+    #     messages=[
+    #         {
+    #             'role': 'user',
+    #             'content': 'Explain the importance of fast language models',
+    #         }
+    #     ],
+    #     model=MODEL,
+    # )
 
-    print(chat_completion.choices[0].message.content)
+    # print(chat_completion.choices[0].message.content)
+    pass
 
 
 if __name__ == '__main__':
