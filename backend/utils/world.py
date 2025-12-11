@@ -7,7 +7,7 @@ class World:
         self.name = name
         self.location = location
         # list of dicts
-        # { description, location, time, characters_involved? }
+        # { description, location, characters_involved? }
         self.events: list[Event] = []
         # list of dicts
         # { name, background }
