@@ -38,6 +38,7 @@ An AI-powered choose your own adventure simulator.
 
 - Player classes / stats that evolve
 - NPCs controlled by AI
+- Reading text
 
 ## Game Loop
 

@@ -1,6 +1,5 @@
 from character import Character
 from logger import logger
-from models import Event
 from world import World
 
 
