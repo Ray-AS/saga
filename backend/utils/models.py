@@ -4,8 +4,7 @@ from typing import TypedDict
 class Event(TypedDict):
     description: str
     location: str
-    time: str
-    characters_involved: list[str]
+    characters_involved: list[str] | None
 
 
 class NPC(TypedDict):

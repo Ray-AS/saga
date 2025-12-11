@@ -1,11 +1,11 @@
 from logger import logger
-from models import Event, NPC
+from models import NPC, Event
 
 
 class World:
-    def __init__(self, location: str, time: str):
+    def __init__(self, name: str, location: str):
+        self.name = name
         self.location = location
-        self.time = time
         # list of dicts
         # { description, location, time, characters_involved? }
         self.events: list[Event] = []
@@ -13,11 +13,10 @@ class World:
         # { name, background }
         self.npcs: list[NPC] = []
 
-    def add_event(self, description: str, characters_involved: list[str]):
+    def add_event(self, description: str, characters_involved: list[str] | None = None):
         new_event: Event = {
             'description': description,
             'location': self.location,
-            'time': self.time,
             'characters_involved': characters_involved,
         }
         logger.log_event_added(new_event)
