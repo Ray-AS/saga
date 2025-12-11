@@ -2,7 +2,7 @@ from logger import logger
 
 
 class Character:
-    def __init__(self, name: str, character_class: str):
+    def __init__(self, name: str, character_class: str = ''):
         self.name = name
         # Implement below features later
         self.character_class = character_class

@@ -27,6 +27,9 @@ class Logger:
     def log_npc_added(self, new_npc: NPC):
         print(f'NPC ({new_npc["name"]}): {new_npc["background"]}')
 
+    def log_character_generated(self, name: str, character_class: str):
+        print(f'CHARACTER CREATED ({name}: {character_class})')
+
     def log_world_generated(self, name: str):
         print(f'WORLD CREATED ({name})')
 
