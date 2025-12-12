@@ -1,3 +1,5 @@
+import json
+
 from models import NPC, Event
 
 
@@ -32,6 +34,9 @@ class Logger:
 
     def log_world_generated(self, name: str):
         print(f'WORLD CREATED ({name})')
+
+    def pretty_print_json(self, data):
+        print(json.dumps(data, indent=4))
 
 
 logger = Logger()

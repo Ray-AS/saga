@@ -1,8 +1,7 @@
 import os
 
+from backend.utils.configs import MODEL
 from groq import Groq
-
-from configs import MODEL
 
 
 def main():

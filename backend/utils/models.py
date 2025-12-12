@@ -17,7 +17,7 @@ class Turn(TypedDict):
     ai: str
 
 
-MessageTemplate: str = """
+SystemMessageContent: str = """
 # ROLE
 {role}
 
@@ -29,10 +29,12 @@ MessageTemplate: str = """
 
 # OUTPUT FORMAT
 {format}
-
-# CONTEXT HISTORY (Past Turns)
-{history}
-
-# PLAYER ACTION
-{player_action}
 """
+
+
+class Response(TypedDict):
+    full: str
+    condensed: str
+    key: str
+    characters: list[dict[str, str]]
+    choices: list[str]

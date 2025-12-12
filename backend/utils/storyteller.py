@@ -1,7 +1,14 @@
+import json
+import os
+import random
 from textwrap import dedent
 
-from models import MessageTemplate, Turn
-from test_values import test_history
+from configs import MODEL
+from groq import Groq
+from groq.types.chat import ChatCompletionMessageParam as Message
+from logger import logger
+from models import SystemMessageContent, Turn
+from test_values import mock_responses, test_history
 
 
 class Storyteller:
@@ -15,6 +22,7 @@ class Storyteller:
         self.action_constraints: list[str] = [
             '**NEVER** control the player character; only describe the consequences of their actions.',
             '**NEVER** output any text outside the requested JSON structure.',
+            '**ENSURE** generated outcomes and choices are not **always** positive, but can be neutral or negative based on context and player decisions (i.e. be unbiased and realistic)',
         ]
 
         self.format: str = dedent("""
@@ -30,38 +38,62 @@ class Storyteller:
 
         self.history: list[Turn] = []
 
-    def generate_history(self, limit: int = -1):
-        length = len(self.history)
-        if limit == -1 or limit > length:
-            limit = length
-
-        history = ''
-        for i in range(length - limit, length):
-            history += (
-                f'Turn {i + 1}:\n'
-                f'- User: {self.history[i]["user"]}\n'
-                f'- AI: {self.history[i]["ai"]}\n'
-            )
-
-        return history[:-1]
-
-    def generate_message(self, player_action: str):
+    def generate_system_message(self) -> Message:
         style_constraints = '\n'.join(f'- {c}' for c in self.style_constraints)
         action_constraints = '\n'.join(f'- {c}' for c in self.action_constraints)
-        history = self.generate_history()
-
-        text = MessageTemplate.format(
+        system_message_content = SystemMessageContent.format(
             role=self.role,
             style_constraints=style_constraints,
             action_constraints=action_constraints,
             format=self.format,
-            history=history,
-            player_action=player_action,
         ).strip()
 
-        return text
+        return {
+            'role': 'system',
+            'content': system_message_content,
+        }
+
+    def generate_context_messages(self, limit: int = -1):
+        length = len(self.history)
+        if limit == -1 or limit > length:
+            limit = length
+
+        context_messages: list[Message] = []
+
+        for i in range(length - limit, length):
+            user_message: Message = {
+                'role': 'user',
+                'content': f'Turn {i + 1}: {self.history[i]["user"]}',
+            }
+            assistant_message: Message = {
+                'role': 'assistant',
+                'content': f'Turn {i + 1}: {self.history[i]["ai"]}',
+            }
+            context_messages.append(user_message)
+            context_messages.append(assistant_message)
+
+        return context_messages
+
+    def generate_outcome(self, player_action: str):
+        messages = [self.generate_system_message()] + self.generate_context_messages()
+        messages.append({'role': 'user', 'content': f'Choice: {player_action}'})
+
+        # client = Groq(
+        #     api_key=os.environ.get('GROQ_API_KEY'),
+        # )
+
+        # chat_completion = client.chat.completions.create(
+        #     messages=messages,
+        #     model=MODEL,
+        # )
+
+        # actual_response = chat_completion.choices[0].message.content
+
+        return [messages, random.choice(mock_responses)]
 
 
 storyteller = Storyteller()
 storyteller.history = test_history
-print(storyteller.generate_message('escort the captives back to town'))
+outcome = storyteller.generate_outcome('escort the captives back to town')
+logger.pretty_print_json(outcome[0])
+logger.pretty_print_json(outcome[1])
