@@ -39,8 +39,11 @@ class Storyteller:
         self.history: list[Turn] = []
 
     def generate_system_message(self) -> Message:
+        # Join and format constraints
         style_constraints = '\n'.join(f'- {c}' for c in self.style_constraints)
         action_constraints = '\n'.join(f'- {c}' for c in self.action_constraints)
+
+        # Assemble message content using template
         system_message_content = SystemMessageContent.format(
             role=self.role,
             style_constraints=style_constraints,
@@ -55,11 +58,14 @@ class Storyteller:
 
     def generate_context_messages(self, limit: int = -1):
         length = len(self.history)
+
+        # Determine how many turns to return
         if limit == -1 or limit > length:
             limit = length
 
         context_messages: list[Message] = []
 
+        # For each turn, generate the user and ai action messages and append to context list
         for i in range(length - limit, length):
             user_message: Message = {
                 'role': 'user',
@@ -75,6 +81,7 @@ class Storyteller:
         return context_messages
 
     def generate_outcome(self, player_action: str):
+        # Assemble whole message: system, context, user choice
         messages = [self.generate_system_message()] + self.generate_context_messages()
         messages.append({'role': 'user', 'content': f'Choice: {player_action}'})
 
@@ -89,11 +96,12 @@ class Storyteller:
 
         # actual_response = chat_completion.choices[0].message.content
 
+        # Return a mock response for now
         return [messages, random.choice(mock_responses)]
 
 
-storyteller = Storyteller()
-storyteller.history = test_history
-outcome = storyteller.generate_outcome('escort the captives back to town')
-logger.pretty_print_json(outcome[0])
-logger.pretty_print_json(outcome[1])
+# storyteller = Storyteller()
+# storyteller.history = test_history
+# outcome = storyteller.generate_outcome('escort the captives back to town')
+# logger.pretty_print_json(outcome[0])
+# logger.pretty_print_json(outcome[1])
