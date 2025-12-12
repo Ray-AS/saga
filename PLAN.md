@@ -82,3 +82,21 @@ An AI-powered choose your own adventure simulator.
   - Updates playthrough data
   - Decides if game is ended
   - Talks to story generator
+
+## Basic Start
+
+- Character
+  - Just a name
+- World
+  - Tracking events
+  - Location
+  - Tracking npcs
+- Storyteller
+  - Generate story based on user choice
+  - Prompt; history; example/format
+- Playthrough
+  - Game settings (genre, length)
+  - Hold world and character
+  - Hold unabridged story
+  - Check progress
+  - Generate assets/objects
