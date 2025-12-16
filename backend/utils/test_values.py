@@ -1,4 +1,12 @@
-from models import Response, Turn
+from backend.utils.models import Turn
+
+test_start: tuple[str, Turn] = (
+    'You are traveling through a dark forest when you are set upon by a goblin.',
+    {
+        'user': 'character created',
+        'ai': 'goblin attacks you while traveling in forest.',
+    },
+)
 
 test_history: list[Turn] = [
     {
@@ -15,7 +23,7 @@ test_history: list[Turn] = [
     },
 ]
 
-mock_responses: list[Response] = [
+mock_responses = [
     {
         'full': 'As you escort the captives back to town, they share tales of their captivity and the brutal treatment they suffered at the hands of the goblins. The townspeople, upon seeing the freed captives, erupt in cheers and celebration. The town elder approaches you, his eyes filled with gratitude, and thanks you for your bravery. However, amidst the festivities, you notice a figure watching from the shadows, their intentions unclear. The captives, now safe, thank you for your selflessness and assure you that they will never forget your heroism.',
         'condensed': 'Escorted captives back to town, received praise',

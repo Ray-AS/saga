@@ -55,6 +55,13 @@ An AI-powered choose your own adventure simulator.
   - Repeat
 - End game
   - Summary screen
+- Dynamic story generation + strict, rule-based combat
+  - Choices are dynamically-generated (success on some choices can depend on player stats i.e. DC)
+  - Combat enemies are dynamically-generated in a structured way (hp, damage, etc.)
+  - Player interaction in combat is rule-based i.e. predefined spells and attacks
+    - D&D style combat may not be the best fit
+    - Puzzles?
+    - Cards?
 
 ## Classes
 

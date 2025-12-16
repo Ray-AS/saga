@@ -1,5 +1,5 @@
-from logger import logger
-from models import NPC, Event
+from backend.utils.logger import logger
+from backend.utils.models import NPC, Event
 
 
 class World:

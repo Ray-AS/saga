@@ -1,4 +1,7 @@
+from textwrap import dedent
 from typing import TypedDict
+
+from pydantic import BaseModel
 
 
 class Event(TypedDict):
@@ -32,9 +35,36 @@ SystemMessageContent: str = """
 """
 
 
-class Response(TypedDict):
+class Response(BaseModel):
     full: str
     condensed: str
     key: str
     characters: list[dict[str, str]]
     choices: list[str]
+
+
+class CondensedResponse(BaseModel):
+    full: str
+    condensed: str
+    choices: list[str]
+
+
+COMPLETE_FORMAT: str = dedent("""
+Construct your response as a single, valid JSON object following this schema:
+{
+    full (str): "entire description of events (150-250 words)",
+    condensed (str): "short description of events; keep only essentials that affect future story logic (30-50 words)",
+    key (str): "one sentence description of events (8-15 words)",
+    characters (list[dict{"name": "Frodo", "action": "Threw ring into the fire."}]): "characters involved in the events and what they did"
+    choices (list[str]): "available options for the player to proceed; must be unique and make sense for the narrative (e.g. ["option 1", "option 2"])"
+}
+""").strip()
+
+CONDENSED_FORMAT: str = dedent("""
+Construct your response as a single, valid JSON object following this schema:
+{
+    full (str): "entire description of events (150-250 words)",
+    condensed (str): "short description of events; keep only essentials that affect future story logic (30-50 words)",
+    choices (list[str]): "available options for the player to proceed; must be unique and make sense for the narrative (e.g. ["option 1", "option 2"])"
+}
+""").strip()

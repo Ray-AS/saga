@@ -1,11 +1,17 @@
 import json
 
-from models import NPC, Event
+from backend.utils.models import NPC, Event, Turn
 
 
 class Logger:
     def __init__(self):
         pass
+
+    def log_story(self, story: str, turn: Turn):
+        print('---STORY---')
+        print(story)
+        print('---TURN---')
+        self.pretty_print_json(turn)
 
     def log_dmg_taken(self, name: str, dmg: int, current_hp: int):
         print(f'{name} taking {dmg} damage. HP: {current_hp - dmg}')

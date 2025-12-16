@@ -1,19 +1,21 @@
-from character import Character
-from logger import logger
-from world import World
+from backend.utils.character import Character
+from backend.utils.logger import logger
+from backend.utils.models import Turn
+from backend.utils.world import World
 
 
 class Playthrough:
-    def __init__(self, difficulty: str, genre: str, length: int):
-        self.difficulty = difficulty  # Not going to implement for now
-        self.genre = genre
-        self.length = length
+    def __init__(self):
+        # self.difficulty = difficulty  # Not going to implement for now
+        # self.genre = genre
+        # self.length = length
+        # self.interactions: int = 0
         self.mc: Character | None = None
         self.world: World | None = None
         self.story: list[str] = []
-        self.interactions: int = 0
+        self.history: list[Turn] = []
 
-    def generate_character(self, name: str, character_class: str):
+    def generate_character(self, name: str, character_class: str = ''):
         self.mc = Character(name, character_class)
         logger.log_character_generated(self.mc.name, self.mc.character_class)
 

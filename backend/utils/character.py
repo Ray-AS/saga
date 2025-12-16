@@ -1,4 +1,4 @@
-from logger import logger
+# from backend.utils.logger import logger
 
 
 class Character:
