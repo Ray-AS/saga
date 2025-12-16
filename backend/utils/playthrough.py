@@ -16,7 +16,7 @@ class Playthrough:
         logger.log_character_generated(self.mc.name)
 
     def generate_story_summary(self):
-        return '\n\n\t'.join(self.story)
+        return '\n\n'.join(self.story)
 
     def generate_turn_summary(self):
         lines: list[str] = []

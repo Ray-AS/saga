@@ -25,6 +25,7 @@ class Storyteller:
             'Output strictly valid JSON in the exact format matching the schema: {"full": "...", "condensed": "...", "choices": ["..."]}. No text before or after the JSON object',
             "The response must begin with '{' and end with '}'. Do not include any text outside the JSON object.",
             'Escape double quotes with a backslash if they appear inside a string.',
+            'DO NOT include a "choices: ..." section in the "full" value of the object.',
             "Write exclusively in second person, always referring to the player as 'you'.",
             "The 'full' field must contain only immersive narrative prose. Do not include summaries, labels, or meta commentary.",
             'Use concrete sensory details (sound, texture, temperature, smell) instead of abstract or vague concepts.',
@@ -53,7 +54,7 @@ class Storyteller:
         self.format: str = FORMAT
 
     def request_story(self, messages: list[Message]):
-        model = MODEL_LIST[1]
+        model = MODEL_LIST[0]
         print(model)
 
         chat_completion = self.client.chat.completions.create(

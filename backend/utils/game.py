@@ -31,9 +31,9 @@ class Game:
         # Initialize story and get starting choices
         choices: list[str] = self.initialize()
         history = self.playthrough.history
-        turn: Turn = {'user': '', 'ai': ''}
 
         while not game_over:
+            turn: Turn = {'user': '', 'ai': ''}
             # If there are no choices, just generate story with no player action
             if not choices:
                 outcome = self.storyteller.generate_outcome(history)
