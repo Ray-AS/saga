@@ -63,8 +63,8 @@ Construct your response as a single, valid JSON object following this schema:
 CONDENSED_FORMAT: str = dedent("""
 Construct your response as a single, valid JSON object following this schema:
 {
-    full (str): "entire description of events (150-250 words)",
-    condensed (str): "short description of events; keep only essentials that affect future story logic (30-50 words)",
+    full (str): "entire description of events (250-300 words)",
+    condensed (str): "short description of events; keep only essentials that affect future story logic (100 words / 3-4 sentences)",
     choices (list[str]): "available options for the player to proceed; must be unique and make sense for the narrative (e.g. ["option 1", "option 2"])"
 }
 """).strip()

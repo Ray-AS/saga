@@ -24,11 +24,22 @@ class Storyteller:
         self.style_constraints: list[str] = [
             'Keep responses concise, vivid, and actionable.',
             'Always reference the player character in the second person ("you").',
+            'Avoid abstract phrases like "dark energy" or "malevolent presence".',
+            'Prefer concrete sensory descriptions (sound, texture, temperature).',
+            'Use varied sentence length for pacing.',
+            'End scenes with a clear outcome summary before transitioning. Example: “You escape the guards, but are now wanted.”',
         ]
         self.action_constraints: list[str] = [
             '**NEVER** control the player character; only describe the consequences of their actions.',
             '**NEVER** output any text outside the requested JSON structure.',
             '**ENSURE** generated outcomes and choices are not **always** positive, but can be neutral or negative based on context and player decisions (i.e. be unbiased and realistic)',
+            'Each scene must have a clear objective. Once the objective is achieved or failed, the scene must end and transition. Do not extend a scene indefinitely.',
+            'If the player repeats the same type of action more than twice, the situation must change decisively (success, failure, or irreversible consequence).',
+            'NPCs must have conflicting motivations and imperfect knowledge.',
+            'Player actions must have tangible costs (e.g. magic is not "free")',
+            'Major NPCs must have a persistent attitude toward the player (e.g. hostile, wary, cooperative). Actions must shift this attitude and affect future behavior.',
+            'Each choice must meaningfully alter the world state. Avoid choices that lead to the same outcome with different wording.',
+            'The world must advance even if the player hesitates. Delays increase danger or remove options.',
         ]
 
         self.format: str = CONDENSED_FORMAT
