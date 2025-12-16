@@ -4,6 +4,7 @@ import random
 from backend.utils.configs import MODEL_LIST
 from backend.utils.models import (
     FORMAT,
+    PROGRESSION_DESCRIPTION,
     Response,
     SystemMessageContent,
     Turn,
@@ -21,36 +22,40 @@ class Storyteller:
 
         self.role: str = 'You are the story teller of an interactive story.'
 
-        self.style_constraints: list[str] = [
-            'Keep responses concise, vivid, and actionable.',
-            'Always reference the player character in the second person ("you").',
-            'Avoid abstract phrases like "dark energy" or "malevolent presence".',
-            'Prefer concrete sensory descriptions (sound, texture, temperature).',
-            'Use varied sentence length for pacing.',
-            'End scenes with a clear outcome summary before transitioning. Example: “You escape the guards, but are now wanted.”',
-            'Your response MUST begin with `{` and end with `}`. Do NOT include narration, labels, explanations, or prefixes outside the JSON object. If you include any text outside the JSON, the response is invalid.',
-            'The `full` section should be an organic description of the story progression for the user (i.e. do not include any tl;dr or short summary at the end; just the story)',
-            '**ENSURE** json is in correct format `{"full": "...", "condensed": "...", "choices": ["...", "..."]}`',
+        self.style_constraints = [
+            'Output strictly valid JSON in the exact format matching the schema: {"full": "...", "condensed": "...", "choices": ["..."]}. No text before or after the JSON object',
+            "The response must begin with '{' and end with '}'. Do not include any text outside the JSON object.",
+            'Escape double quotes with a backslash if they appear inside a string.',
+            "Write exclusively in second person, always referring to the player as 'you'.",
+            "The 'full' field must contain only immersive narrative prose. Do not include summaries, labels, or meta commentary.",
+            'Use concrete sensory details (sound, texture, temperature, smell) instead of abstract or vague concepts.',
+            "Avoid generic fantasy phrases (e.g., 'dark energy', 'malevolent presence', 'ancient power').",
+            'Keep prose vivid, concise, and actionable; every paragraph should move the situation forward.',
+            'Vary sentence length intentionally to control pacing and tension.',
+            'End each scene with a clear, natural consequence embedded in the narrative (not a labeled summary).',
+            "Do not summarize consequences using labels like 'Outcome:' or 'Result:'. Consequences must be embedded naturally in the narrative.",
         ]
-        self.action_constraints: list[str] = [
-            '**NEVER** control the player character; only describe the consequences of their actions.',
-            '**NEVER** output any text outside the requested JSON structure.',
-            '**ENSURE** generated outcomes and choices are not **always** positive, but can be neutral or negative based on context and player decisions (i.e. be unbiased and realistic)',
-            'Each scene must have a clear objective. Once the objective is achieved or failed, the scene must end and transition. Do not extend a scene indefinitely.',
-            'If the player repeats the same type of action more than twice, the situation must change decisively (success, failure, or irreversible consequence).',
-            'NPCs must have conflicting motivations and imperfect knowledge.',
-            'Player actions must have tangible costs (e.g. magic is not "free")',
-            'Major NPCs must have a persistent attitude toward the player (e.g. hostile, wary, cooperative). Actions must shift this attitude and affect future behavior.',
-            'Each choice must meaningfully alter the world state. Avoid choices that lead to the same outcome with different wording.',
-            'The world must advance even if the player hesitates. Delays increase danger or remove options.',
-            'When presenting choices, describe only the immediate intent or approach of each option, NOT its result. Consequences may ONLY be described after the player commits to a choice.',
-            '**NEVER** describe the outcomes to a choices the user has yet to make. Doing so is considered **FAILURE**.',
+
+        self.action_constraints = [
+            "Never control the player character. Describe only the consequences of the player's chosen action.",
+            'If you accidentally violate player agency or describe unchosen outcomes, you MUST immediately rewrite the response to fix the issue before replying.'
+            'Ensure outcomes are unbiased and realistic. Success is not guaranteed; failure and neutral results must occur when justified.',
+            'Every scene must have a clear objective. Once it is achieved or failed, end the scene and transition.',
+            'If the player repeats the same type of action more than twice, force a decisive change (success, failure, or irreversible consequence).',
+            'NPCs must have conflicting motivations, limited knowledge, and persistent attitudes that change based on player actions.',
+            'All player actions must have tangible costs or tradeoffs (time, resources, injury, reputation, risk).',
+            'Each choice must meaningfully change the world state. Do not offer choices that lead to the same result.',
+            'The world advances even if the player hesitates. Delays increase danger, remove options, or worsen outcomes.',
+            'When presenting choices, describe only the immediate intent or approach. Never reveal results in advance.',
+            'Never describe the consequences of an unchosen option. Consequences are revealed only after the player commits.',
+            "After resolving the player's chosen action, stop. Do not advance the story beyond the immediate consequences.",
         ]
 
         self.format: str = FORMAT
 
     def request_story(self, messages: list[Message]):
-        model = random.choice(MODEL_LIST)
+        model = MODEL_LIST[1]
+        print(model)
 
         chat_completion = self.client.chat.completions.create(
             messages=messages,
@@ -62,9 +67,6 @@ class Storyteller:
             raise Exception('Groq response is empty')
 
         raw = raw.strip()
-
-        print(model)
-        print(raw)
 
         try:
             return Response.model_validate_json(raw)
@@ -78,10 +80,11 @@ class Storyteller:
 
     def generate_start(self) -> Response:
         message: list[Message] = [
+            self.generate_system_message(),
             {
-                'role': 'system',
-                'content': f'Generate the start to a random choose your own adventure story (can be any genre)\n{self.format}',
-            }
+                'role': 'user',
+                'content': 'Generate the opening scene of a new interactive story.',
+            },
         ]
 
         return self.request_story(message)
@@ -96,6 +99,7 @@ class Storyteller:
             role=self.role,
             style_constraints=style_constraints,
             action_constraints=action_constraints,
+            progression_description=PROGRESSION_DESCRIPTION,
             format=self.format,
         ).strip()
 
@@ -123,7 +127,7 @@ class Storyteller:
             }
             assistant_message: Message = {
                 'role': 'assistant',
-                'content': f'Turn {i + 1}: {history[i]["ai"]}',
+                'content': history[i]['ai'],
             }
             context_messages.append(user_message)
             context_messages.append(assistant_message)

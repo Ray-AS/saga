@@ -15,5 +15,19 @@ class Playthrough:
         self.mc = Character(name)
         logger.log_character_generated(self.mc.name)
 
-    def generate_summary(self):
+    def generate_story_summary(self):
         return '\n\n\t'.join(self.story)
+
+    def generate_turn_summary(self):
+        lines: list[str] = []
+
+        for i, turn in enumerate(self.history, start=1):
+            lines.append(f'[TURN {i}]')
+            lines.append('YOU:')
+            lines.append(turn['user'] or '[no action]')
+            lines.append('')
+            lines.append('AI:')
+            lines.append(turn['ai'])
+            lines.append('')
+
+        return '\n'.join(lines).strip()
