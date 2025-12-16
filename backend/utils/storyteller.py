@@ -1,5 +1,4 @@
 import os
-import random
 
 from backend.utils.configs import MODEL_LIST
 from backend.utils.models import (
