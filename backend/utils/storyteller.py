@@ -191,7 +191,7 @@ class Storyteller:
             player_action (str | None, optional): choice player makes for given choices. Defaults to None.
 
         Returns:
-            tuple[list[Message], Response]: assembled messages; response model containing advancement details
+            StoryOutcome: assembled messages; response model containing advancement details
         """
         # Assemble whole message: system, context, user choice
         messages = [self.generate_system_message()] + self.generate_context_messages(
