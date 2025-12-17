@@ -11,7 +11,7 @@ class Logger:
         print('---STORY---')
         print(story)
         print('---TURN---')
-        self.pretty_print_json(turn)
+        print(turn.model_dump_json(indent=4))
 
     def log_character_generated(self, name: str):
         print(f'CHARACTER CREATED (Name: {name})')
