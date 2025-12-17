@@ -14,6 +14,17 @@ from pydantic import ValidationError
 
 
 class Storyteller:
+    """
+    Represents dynamic story generator for an interactive game
+
+    Attributes:
+        client (Groq): LLM model that generates story
+        role (str): describes role of the LLM
+        style_constraints (list[str]): stylistic rules LLM must follow
+        action_constraints (list[str]): action rules LLM must follow
+        format (str): schema which LLM response must match
+    """
+
     def __init__(self):
         self.client = Groq(
             api_key=os.environ.get('GROQ_API_KEY'),
@@ -53,7 +64,19 @@ class Storyteller:
 
         self.format: str = FORMAT
 
-    def request_story(self, messages: list[Message]):
+    def request_story(self, messages: list[Message]) -> Response:
+        """
+        Requests next portion of story from LLM based on prior turn history
+
+        Args:
+            messages (list[Message]): system prompt; user actions and ai reactions per turn
+
+        Raises:
+            ValidationError: generated response does not match Pydantic Response model
+
+        Returns:
+            Response: structure containing story progression and choices
+        """
         model = MODEL_LIST[0]
         print(model)
 
@@ -79,6 +102,12 @@ class Storyteller:
             return failed_response
 
     def generate_start(self) -> Response:
+        """
+        Generates opening sequence of story
+
+        Returns:
+            Response: structure containing opening paragraph(s) and choices
+        """
         message: list[Message] = [
             self.generate_system_message(),
             {
@@ -90,6 +119,12 @@ class Storyteller:
         return self.request_story(message)
 
     def generate_system_message(self) -> Message:
+        """
+        Generates system prompt by combining attributes
+
+        Returns:
+            Message: dict containing system info that matches the message model expected by LLM
+        """
         # Join and format constraints
         style_constraints = '\n'.join(f'- {c}' for c in self.style_constraints)
         action_constraints = '\n'.join(f'- {c}' for c in self.action_constraints)
@@ -111,6 +146,16 @@ class Storyteller:
     def generate_context_messages(
         self, history: list[Turn], limit: int = -1
     ) -> list[Message]:
+        """
+        Generates context prompt by combining turn history of user and ai
+
+        Args:
+            history (list[Turn]): turn history for a playthrough
+            limit (int, optional): number of turns to include in prompt. Defaults to -1.
+
+        Returns:
+            list[Message]: list of dicts containing turn info that matches the message model expected by LLM
+        """
         length = len(history)
 
         # Determine how many turns to return
@@ -137,6 +182,16 @@ class Storyteller:
     def generate_outcome(
         self, history: list[Turn], player_action: str | None = None
     ) -> tuple[list[Message], Response]:
+        """
+        Combines system and context messages into one to generate story advancement
+
+        Args:
+            history (list[Turn]): turn history for a playthrough
+            player_action (str | None, optional): choice player makes for given choices. Defaults to None.
+
+        Returns:
+            tuple[list[Message], Response]: assembled messages; response model containing advancement details
+        """
         # Assemble whole message: system, context, user choice
         messages = [self.generate_system_message()] + self.generate_context_messages(
             history

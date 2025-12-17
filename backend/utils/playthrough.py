@@ -4,6 +4,15 @@ from backend.utils.models import Turn
 
 
 class Playthrough:
+    """
+    Represents a playthrough in an interactive story game (i.e. an individual story)
+
+    Attributes:
+        story (list[str]): list of paragraphs describing each point in story
+        history (list[Turn]): list of Turn dicts describing player and ai action at each point in story
+        mc (Character): object that represents the main character (player) of story
+    """
+
     def __init__(self):
         self.story: list[str] = []
         self.history: list[Turn] = []
@@ -12,13 +21,31 @@ class Playthrough:
         self.mc: Character | None = None
 
     def generate_character(self, name: str):
+        """
+        Generates an instance of Character class based on player input name to represent the main character
+
+        Args:
+            name (str): name of character
+        """
         self.mc = Character(name)
         logger.log_character_generated(self.mc.name)
 
     def generate_story_summary(self):
+        """
+        Joins all paragraphs in story
+
+        Returns:
+            str: entire story in one string
+        """
         return '\n\n'.join(self.story)
 
     def generate_turn_summary(self):
+        """
+        Joins all Turn dicts into one formatted string
+
+        Returns:
+            str: all turns in story
+        """
         lines: list[str] = []
 
         for i, turn in enumerate(self.history, start=1):
