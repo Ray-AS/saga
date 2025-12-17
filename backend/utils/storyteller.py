@@ -1,9 +1,15 @@
 import os
 
-from backend.utils.configs import MODEL_LIST
-from backend.utils.models import (
+from backend.utils.configs import (
+    ACTION_CONSTRAINTS,
     FORMAT,
+    MODEL_LIST,
     PROGRESSION_DESCRIPTION,
+    ROLE_DESCRIPTION,
+    STARTING_PROMPT,
+    STYLE_CONSTRAINTS,
+)
+from backend.utils.models import (
     Response,
     StoryOutcome,
     SystemMessageContent,
@@ -19,51 +25,23 @@ class Storyteller:
     Represents dynamic story generator for an interactive game
 
     Attributes:
-        client (Groq): LLM model that generates story
+        client (Groq, static): LLM model that generates story
         role (str): describes role of the LLM
         style_constraints (list[str]): stylistic rules LLM must follow
         action_constraints (list[str]): action rules LLM must follow
         format (str): schema which LLM response must match
     """
 
+    client = Groq(
+        api_key=os.environ.get('GROQ_API_KEY'),
+    )
+
     def __init__(self):
-        self.client = Groq(
-            api_key=os.environ.get('GROQ_API_KEY'),
-        )
-
-        self.role: str = 'You are the story teller of an interactive story.'
-
-        self.style_constraints = [
-            'Output strictly valid JSON in the exact format matching the schema: {"full": "...", "condensed": "...", "choices": ["..."]}. No text before or after the JSON object',
-            "The response must begin with '{' and end with '}'. Do not include any text outside the JSON object.",
-            'Escape double quotes with a backslash if they appear inside a string.',
-            'DO NOT include a "choices: ..." section in the "full" value of the object.',
-            "Write exclusively in second person, always referring to the player as 'you'.",
-            "The 'full' field must contain only immersive narrative prose. Do not include summaries, labels, or meta commentary.",
-            'Use concrete sensory details (sound, texture, temperature, smell) instead of abstract or vague concepts.',
-            "Avoid generic fantasy phrases (e.g., 'dark energy', 'malevolent presence', 'ancient power').",
-            'Keep prose vivid, concise, and actionable; every paragraph should move the situation forward.',
-            'Vary sentence length intentionally to control pacing and tension.',
-            'End each scene with a clear, natural consequence embedded in the narrative (not a labeled summary).',
-            "Do not summarize consequences using labels like 'Outcome:' or 'Result:'. Consequences must be embedded naturally in the narrative.",
-        ]
-
-        self.action_constraints = [
-            "Never control the player character. Describe only the consequences of the player's chosen action.",
-            'If you accidentally violate player agency or describe unchosen outcomes, you MUST immediately rewrite the response to fix the issue before replying.'
-            'Ensure outcomes are unbiased and realistic. Success is not guaranteed; failure and neutral results must occur when justified.',
-            'Every scene must have a clear objective. Once it is achieved or failed, end the scene and transition.',
-            'If the player repeats the same type of action more than twice, force a decisive change (success, failure, or irreversible consequence).',
-            'NPCs must have conflicting motivations, limited knowledge, and persistent attitudes that change based on player actions.',
-            'All player actions must have tangible costs or tradeoffs (time, resources, injury, reputation, risk).',
-            'Each choice must meaningfully change the world state. Do not offer choices that lead to the same result.',
-            'The world advances even if the player hesitates. Delays increase danger, remove options, or worsen outcomes.',
-            'When presenting choices, describe only the immediate intent or approach. Never reveal results in advance.',
-            'Never describe the consequences of an unchosen option. Consequences are revealed only after the player commits.',
-            "After resolving the player's chosen action, stop. Do not advance the story beyond the immediate consequences.",
-        ]
-
-        self.format: str = FORMAT
+        self.role = ROLE_DESCRIPTION
+        self.style_constraints = STYLE_CONSTRAINTS
+        self.action_constraints = ACTION_CONSTRAINTS
+        self.format = FORMAT
+        self.progression_description = PROGRESSION_DESCRIPTION
 
     def request_story(self, messages: list[Message]) -> Response:
         """
@@ -87,6 +65,7 @@ class Storyteller:
         )
 
         raw = chat_completion.choices[0].message.content
+
         if not raw:
             raise Exception('Groq response is empty')
 
@@ -96,9 +75,7 @@ class Storyteller:
             return Response.model_validate_json(raw)
         except ValidationError:
             print('Response format invalid, sending dummy data')
-            failed_response: Response = Response(
-                full='failed', condensed='failed', choices=[]
-            )
+            failed_response = Response(full='failed', condensed='failed', choices=[])
 
             return failed_response
 
@@ -109,12 +86,9 @@ class Storyteller:
         Returns:
             Response: structure containing opening paragraph(s) and choices
         """
-        message: list[Message] = [
+        message = [
             self.generate_system_message(),
-            {
-                'role': 'user',
-                'content': 'Generate the opening scene of a new interactive story.',
-            },
+            STARTING_PROMPT,
         ]
 
         return self.request_story(message)
@@ -135,7 +109,7 @@ class Storyteller:
             role=self.role,
             style_constraints=style_constraints,
             action_constraints=action_constraints,
-            progression_description=PROGRESSION_DESCRIPTION,
+            progression_description=self.progression_description,
             format=self.format,
         ).strip()
 
@@ -169,11 +143,11 @@ class Storyteller:
         for i in range(length - limit, length):
             user_message: Message = {
                 'role': 'user',
-                'content': f'Turn {i + 1}: {history[i]["user"]}',
+                'content': f'Turn {i + 1}: {history[i].user}',
             }
             assistant_message: Message = {
                 'role': 'assistant',
-                'content': history[i]['ai'],
+                'content': history[i].ai,
             }
             context_messages.append(user_message)
             context_messages.append(assistant_message)

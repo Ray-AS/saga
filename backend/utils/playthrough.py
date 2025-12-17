@@ -51,10 +51,10 @@ class Playthrough:
         for i, turn in enumerate(self.history, start=1):
             lines.append(f'[TURN {i}]')
             lines.append('YOU:')
-            lines.append(turn['user'] or '[no action]')
+            lines.append(turn.user or '[no action]')
             lines.append('')
             lines.append('AI:')
-            lines.append(turn['ai'])
+            lines.append(turn.ai)
             lines.append('')
 
         return '\n'.join(lines).strip()

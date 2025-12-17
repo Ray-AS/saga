@@ -73,7 +73,7 @@ class Game:
 
         # Generate a random start to a story
         starting_event = self.storyteller.generate_start()
-        turn: Turn = {'user': 'created character', 'ai': starting_event.condensed}
+        turn = Turn(user='created character', ai=starting_event.condensed)
 
         # Update story state with starting data
         self.update_playthrough(starting_event.full, turn)
@@ -88,7 +88,7 @@ class Game:
         history = self.playthrough.history
 
         while not game_over:
-            turn: Turn = {'user': '', 'ai': ''}
+            turn = Turn(user='', ai='')
             # If there are no choices, just generate story with no player action
             if not choices:
                 outcome = self.storyteller.generate_outcome(history)
@@ -105,14 +105,14 @@ class Game:
                     break
 
                 # Generate outcome based on decision
-                turn['user'] = choices[choice]
+                turn.user = choices[choice]
                 outcome = self.storyteller.generate_outcome(history, choices[choice])
 
             # Update story state
-            turn['ai'] = outcome.response.condensed
+            turn.ai = outcome.response.condensed
             story = outcome.response.full
 
-            if story == 'failed' or turn['ai'] == 'failed':
+            if story == 'failed' or turn.ai == 'failed':
                 break
 
             self.update_playthrough(story, turn)
