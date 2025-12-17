@@ -1,6 +1,7 @@
 from textwrap import dedent
-from typing import TypedDict
+from typing import NamedTuple, TypedDict
 
+from groq.types.chat import ChatCompletionMessageParam as Message
 from pydantic import BaseModel
 
 
@@ -31,6 +32,11 @@ class Response(BaseModel):
     full: str
     condensed: str
     choices: list[str]
+
+
+class StoryOutcome(NamedTuple):
+    messages: list[Message]
+    response: Response
 
 
 PROGRESSION_DESCRIPTION = """A single response represents exactly one turn:

@@ -109,8 +109,8 @@ class Game:
                 outcome = self.storyteller.generate_outcome(history, choices[choice])
 
             # Update story state
-            turn['ai'] = outcome[1].condensed
-            story = outcome[1].full
+            turn['ai'] = outcome.response.condensed
+            story = outcome.response.full
 
             if story == 'failed' or turn['ai'] == 'failed':
                 break
@@ -118,7 +118,7 @@ class Game:
             self.update_playthrough(story, turn)
 
             # Update choices
-            choices = outcome[1].choices
+            choices = outcome.response.choices
 
         story_summary = self.playthrough.generate_story_summary()
         turn_summary = self.playthrough.generate_turn_summary()

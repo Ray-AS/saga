@@ -5,6 +5,7 @@ from backend.utils.models import (
     FORMAT,
     PROGRESSION_DESCRIPTION,
     Response,
+    StoryOutcome,
     SystemMessageContent,
     Turn,
 )
@@ -77,7 +78,7 @@ class Storyteller:
         Returns:
             Response: structure containing story progression and choices
         """
-        model = MODEL_LIST[0]
+        model = MODEL_LIST[1]
         print(model)
 
         chat_completion = self.client.chat.completions.create(
@@ -181,7 +182,7 @@ class Storyteller:
 
     def generate_outcome(
         self, history: list[Turn], player_action: str | None = None
-    ) -> tuple[list[Message], Response]:
+    ) -> StoryOutcome:
         """
         Combines system and context messages into one to generate story advancement
 
@@ -201,4 +202,4 @@ class Storyteller:
             messages.append({'role': 'user', 'content': f'Choice: {player_action}'})
 
         response = self.request_story(messages)
-        return (messages, response)
+        return StoryOutcome(messages=messages, response=response)
