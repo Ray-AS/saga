@@ -1,6 +1,6 @@
 from backend.utils.character import Character
 from backend.utils.logger import logger
-from backend.utils.models import Turn
+from backend.utils.models.playthrough_models import Turn
 
 
 class Playthrough:

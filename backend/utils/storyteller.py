@@ -1,6 +1,6 @@
 import os
 
-from backend.utils.configs import (
+from backend.utils.configs.storyteller_configs import (
     ACTION_CONSTRAINTS,
     FORMAT,
     MODEL_LIST,
@@ -9,11 +9,11 @@ from backend.utils.configs import (
     STARTING_PROMPT,
     STYLE_CONSTRAINTS,
 )
-from backend.utils.models import (
+from backend.utils.models.playthrough_models import Turn
+from backend.utils.models.storyteller_models import (
     Response,
     StoryOutcome,
     SystemMessageContent,
-    Turn,
 )
 from groq import Groq
 from groq.types.chat import ChatCompletionMessageParam as Message

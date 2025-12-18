@@ -4,11 +4,6 @@ from groq.types.chat import ChatCompletionMessageParam as Message
 from pydantic import BaseModel
 
 
-class Turn(BaseModel):
-    user: str
-    ai: str
-
-
 class Response(BaseModel):
     full: str
     condensed: str

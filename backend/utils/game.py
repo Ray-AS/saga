@@ -2,7 +2,7 @@ from datetime import datetime
 from pathlib import Path
 
 from backend.utils.logger import logger
-from backend.utils.models import Turn
+from backend.utils.models.playthrough_models import Turn
 from backend.utils.playthrough import Playthrough
 from backend.utils.storyteller import Storyteller
 

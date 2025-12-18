@@ -1,6 +1,6 @@
 import json
 
-from backend.utils.models import Turn
+from backend.utils.models.playthrough_models import Turn
 
 
 class Logger:
