@@ -2,6 +2,43 @@
 
 An AI-powered choose your own adventure simulator.
 
+## Gameplay
+
+- Success Grade
+  - Indicator of the chance of success for each choice
+  - Base Uncertainty + Stats + Intent
+- Stats
+  - Influence: social status, persuasion, intimidation, reputation
+  - Guile: stealth, deception, misdirection
+  - Force: physical prowess, endurance, violence
+  - Insight: perception, reasoning, intuition
+  - Start at 0
+  - Creation of character (llm gives a few formative choices) give +1 maybe + 2 boosts to specific stats
+    - Early game play style
+  - Milestone improvement (i.e. 8 successes -> +1 to stat)
+- Flags
+  - Player State: injured, exhausted
+  - Exposure State: exposed, pursued
+  - Social State: hostile npc, social locked
+  - Pressure State: time pressure, endgame
+- Tension Pool
+  - One global long-term variable that affects the story
+  - States: low, med, high, etc tension levels
+  - Limited choices and more pressure
+- Risk
+  - desperate, bold, standard, careful
+  - affects probability of success and quality of reward
+- Act Score
+  - Long term variable to track state of story to ensure constant forward momentum
+  - 1: establish world and characters; introduce main conflict
+  - 2: learn about conflict and villain; introduce a twist of revelation
+  - 3: culminate in a satisfying final sequence/confrontation; no new plots; resolve story
+  - 4: epilogue describing world and characters and other things based on user choices
+
+- Future
+  - Character customization
+  - More interactive gameplay elements outside of choices
+
 ## Features
 
 - React/Typescript front end

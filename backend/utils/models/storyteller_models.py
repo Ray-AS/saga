@@ -1,5 +1,6 @@
 from typing import NamedTuple
 
+from backend.utils.models.playthrough_models import Choice
 from groq.types.chat import ChatCompletionMessageParam as Message
 from pydantic import BaseModel
 
@@ -7,7 +8,7 @@ from pydantic import BaseModel
 class Response(BaseModel):
     full: str
     condensed: str
-    choices: list[str]
+    choices: list[Choice]
 
 
 class StoryOutcome(NamedTuple):
@@ -27,6 +28,9 @@ SystemMessageContent: str = """
 
 # STORY PROGRESSION DESCRIPTION
 {progression_description}
+
+# CHOICE SCHEMA
+{choice_schema}
 
 # OUTPUT FORMAT
 {format}

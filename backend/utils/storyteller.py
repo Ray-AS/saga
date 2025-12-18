@@ -2,6 +2,7 @@ import os
 
 from backend.utils.configs.storyteller_configs import (
     ACTION_CONSTRAINTS,
+    CHOICE_SCHEMA,
     FORMAT,
     MODEL_LIST,
     PROGRESSION_DESCRIPTION,
@@ -40,6 +41,7 @@ class Storyteller:
         self.role = ROLE_DESCRIPTION
         self.style_constraints = STYLE_CONSTRAINTS
         self.action_constraints = ACTION_CONSTRAINTS
+        self.choice_schema = CHOICE_SCHEMA
         self.format = FORMAT
         self.progression_description = PROGRESSION_DESCRIPTION
 
@@ -110,6 +112,7 @@ class Storyteller:
             style_constraints=style_constraints,
             action_constraints=action_constraints,
             progression_description=self.progression_description,
+            choice_schema=self.choice_schema,
             format=self.format,
         ).strip()
 
@@ -173,6 +176,7 @@ class Storyteller:
         )
 
         if player_action:
+            # ADD SUCCESS/TAGS TO CHOICE
             messages.append({'role': 'user', 'content': f'Choice: {player_action}'})
 
         response = self.request_story(messages)

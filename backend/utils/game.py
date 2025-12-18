@@ -2,7 +2,7 @@ from datetime import datetime
 from pathlib import Path
 
 from backend.utils.logger import logger
-from backend.utils.models.playthrough_models import Turn
+from backend.utils.models.playthrough_models import Choice, Turn
 from backend.utils.playthrough import Playthrough
 from backend.utils.storyteller import Storyteller
 
@@ -84,10 +84,12 @@ class Game:
         """Creates the interactive story game loop and continues until user enters and invalid choice"""
         game_over = False
         # Initialize story and get starting choices
-        choices: list[str] = self.initialize()
+        choices: list[Choice] = self.initialize()
         history = self.playthrough.history
 
+        # NEED TO IMPLEMENT SUCCESS GRADE CALCULATION
         while not game_over:
+            print(choices)
             turn = Turn(user='', ai='')
             # If there are no choices, just generate story with no player action
             if not choices:
@@ -97,7 +99,7 @@ class Game:
                 # Display all choices to user
                 print('---CHOICES---')
                 for i in range(0, num_choices):
-                    print(f'{i + 1}: {choices[i]}')
+                    print(f'{i + 1}: {choices[i].choice}')
 
                 choice = int(input(f'Choose (1 - {num_choices}): ')) - 1
 
@@ -105,8 +107,10 @@ class Game:
                     break
 
                 # Generate outcome based on decision
-                turn.user = choices[choice]
-                outcome = self.storyteller.generate_outcome(history, choices[choice])
+                turn.user = choices[choice].choice
+                outcome = self.storyteller.generate_outcome(
+                    history, choices[choice].choice
+                )
 
             # Update story state
             turn.ai = outcome.response.condensed
