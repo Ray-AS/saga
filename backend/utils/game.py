@@ -106,6 +106,10 @@ class Game:
                 if choice not in range(0, num_choices):
                     break
 
+                # Determine level of success of choice and add tags
+                # Assemble 'user' portion of turn
+                # Update tension, act score, stat progression, tags
+
                 # Generate outcome based on decision
                 turn.user = choices[choice].choice
                 outcome = self.storyteller.generate_outcome(

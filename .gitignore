@@ -28,4 +28,3 @@ __pycache__/
 .ruff_cache/
 commands.txt
 API_KEY.txt
-playthroughs/
