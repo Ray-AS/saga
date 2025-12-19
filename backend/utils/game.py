@@ -1,6 +1,8 @@
 from datetime import datetime
 from pathlib import Path
 
+from backend.utils.character import Character
+from backend.utils.configs.game_configs import INITIAL_STAT_COUNT
 from backend.utils.logger import logger
 from backend.utils.models.playthrough_models import Choice, Turn
 from backend.utils.playthrough import Playthrough
@@ -60,7 +62,46 @@ class Game:
             f.write('---TURN SUMMARY---\n')
             f.write(turn_summary)
 
-    def initialize(self):
+    def get_starting_stats(self):
+        context: list[Turn] = []
+        stats = []
+
+        for step in range(INITIAL_STAT_COUNT):
+            turn = Turn(user='', ai='')
+
+            response = self.storyteller.get_stat_scenario(context)
+
+            print(response.full)
+
+            num_choices = len(response.choices)
+
+            print('---CHOICES---')
+            for i in range(num_choices):
+                print(f'{i + 1}: {response.choices[i].choice_description}')
+
+            choice_index = int(input(f'Choose (1 - {num_choices}): ')) - 1
+
+            if choice_index not in range(0, num_choices):
+                break
+
+            choice = response.choices[choice_index]
+
+            turn.user = choice.choice_description
+            turn.ai = response.condensed
+
+            stats.append(choice.type)
+            context.append(turn)
+
+        return stats
+
+    def increment_stats(self, stats: list[str]):
+        for stat in stats:
+            if self.playthrough.mc:
+                player_stats = self.playthrough.mc.stats
+                current = getattr(player_stats, stat)
+                setattr(player_stats, stat, current + 1)
+
+    def start_story(self):
         """
         Establishes the opening sequence of the playthrough story
 
@@ -70,6 +111,9 @@ class Game:
         # Generate main character (irrelevant to gameplay for now)
         name = input('Enter character name: ')
         self.playthrough.generate_character(name)
+        self.increment_stats(self.get_starting_stats())
+        assert self.playthrough.mc is not None
+        logger.log_stats(self.playthrough.mc.stats)
 
         # Generate a random start to a story
         starting_event = self.storyteller.generate_start()
@@ -84,7 +128,7 @@ class Game:
         """Creates the interactive story game loop and continues until user enters and invalid choice"""
         game_over = False
         # Initialize story and get starting choices
-        choices: list[Choice] = self.initialize()
+        choices: list[Choice] = self.start_story()
         history = self.playthrough.history
 
         # NEED TO IMPLEMENT SUCCESS GRADE CALCULATION
@@ -99,11 +143,11 @@ class Game:
                 # Display all choices to user
                 print('---CHOICES---')
                 for i in range(0, num_choices):
-                    print(f'{i + 1}: {choices[i].choice}')
+                    print(f'{i + 1}: {choices[i].choice_description}')
 
-                choice = int(input(f'Choose (1 - {num_choices}): ')) - 1
+                choice_index = int(input(f'Choose (1 - {num_choices}): ')) - 1
 
-                if choice not in range(0, num_choices):
+                if choice_index not in range(0, num_choices):
                     break
 
                 # Determine level of success of choice and add tags
@@ -111,9 +155,9 @@ class Game:
                 # Update tension, act score, stat progression, tags
 
                 # Generate outcome based on decision
-                turn.user = choices[choice].choice
+                turn.user = choices[choice_index].choice_description
                 outcome = self.storyteller.generate_outcome(
-                    history, choices[choice].choice
+                    history, choices[choice_index].choice_description
                 )
 
             # Update story state

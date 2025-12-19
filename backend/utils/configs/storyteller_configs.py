@@ -9,6 +9,7 @@ MODEL_LIST = [
     #'openai/gpt-oss-20b',
 ]
 
+# GENERAL PROMPTS
 ROLE_DESCRIPTION = 'You are the story teller of an interactive story.'
 
 STYLE_CONSTRAINTS = [
@@ -41,6 +42,7 @@ ACTION_CONSTRAINTS = [
     "After resolving the player's chosen action, stop. Do not advance the story beyond the immediate consequences.",
 ]
 
+# STORY ADVANCEMENT PROMPTS
 CHOICE_SCHEMA: str = dedent("""
 Stats:
 - Force: physical prowess; endurance; violence
@@ -50,7 +52,7 @@ Stats:
 
 A choice (of type Choice) follows this format:
 {
-    "choice" (str): "description for an option the player can choose; ensure a little description (bad: "defend", good: "unsheathe your blade and parry the strike")",
+    "choice_description" (str): "description for an option the player can choose; ensure a little description (bad: "defend", good: "unsheathe your blade and parry the strike")",
     "difficulty" ("easy" | "medium" | "hard" | "extreme"): "the difficulty of the choice; be realistic (e.g. generally, assassinate king shouldn't be "easy")",
     "type" ("force" | "guile" | "influence" | "insight"): "classification of choice for a stat based on what it requires"
 }
@@ -61,7 +63,7 @@ Construct your response as a single, valid JSON object following this schema:
 {
     "full" (str): "entire description of events (150-300 words; longer for important scenes, shorter for unimportant)",
     "condensed" (str): "short description of events; keep only essentials that affect future story logic (50-100 words / 3-4 sentences)",
-    "choices" (list[Choice]]): "available options for the player to proceed; must be unique and make sense for the narrative (e.g. [{"choice": "option 1", "difficulty": "easy", "type": "force"}, ...])"
+    "choices" (list[Choice]]): "available options for the player to proceed; must be unique and make sense for the narrative (e.g. [{"choice_description": "option 1", "difficulty": "easy", "type": "force"}, ...])"
 }
 """).strip()
 
@@ -71,7 +73,39 @@ PROGRESSION_DESCRIPTION = """A single response represents exactly one turn:
 - Present new choices
 - Do not resolve any future choices"""
 
+# STORY START PROMPT
 STARTING_PROMPT: Message = {
     'role': 'user',
     'content': 'Generate the opening scene of a new interactive story.',
 }
+
+# CHARACTER CREATION PROMPTSs
+CHOICE_SCHEMA: str = dedent("""
+Description Categories:
+- Force: physical prowess; endurance; violence
+- Guile: stealth; deception; misdirection
+- Influence: social status; persuasion; intimidation
+- Insight: perception; reasoning; intuition
+
+A choice (of type Choice) follows this format:
+{
+    "choice_description" (str): "description for an option the player can choose; ensure a little description (bad: "defend", good: "unsheathe your blade and parry the strike")",
+    "type" ("force" | "guile" | "influence" | "insight"): "classification of choice as to what it would say about the character"
+}
+""").strip()
+
+STAT_FORMAT: str = dedent("""
+Construct your response as a single, valid JSON object following this schema:
+{
+    "full" (str): "entire description of events (150-300 words; longer for important scenes, shorter for unimportant)",
+    "condensed" (str): "short description of events; keep only essentials that affect future story logic (50-100 words / 3-4 sentences)",
+    "choices" (list[Choice]]): "available options for the player to proceed; must be unique and make sense for the narrative (e.g. [{"choice_description": "option 1", "type": "force"}, ...])"
+}
+""").strip()
+
+STAT_PROMPT = f"""Generate a scenario (following the context if provided) that will determine a characters personality/skills.
+
+{CHOICE_SCHEMA}
+
+{STAT_FORMAT}
+"""

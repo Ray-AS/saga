@@ -8,6 +8,7 @@ from backend.utils.configs.storyteller_configs import (
     PROGRESSION_DESCRIPTION,
     ROLE_DESCRIPTION,
     STARTING_PROMPT,
+    STAT_PROMPT,
     STYLE_CONSTRAINTS,
 )
 from backend.utils.models.playthrough_models import Turn
@@ -80,6 +81,13 @@ class Storyteller:
             failed_response = Response(full='failed', condensed='failed', choices=[])
 
             return failed_response
+
+    def get_stat_scenario(self, context: list[Turn]) -> Response:
+        message: list[Message] = [{'role': 'system', 'content': STAT_PROMPT}]
+        if context:
+            message += self.generate_context_messages(context)
+
+        return self.request_story(message)
 
     def generate_start(self) -> Response:
         """
