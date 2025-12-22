@@ -4,7 +4,7 @@ from pathlib import Path
 from backend.utils.character import Character
 from backend.utils.configs.game_configs import INITIAL_STAT_COUNT
 from backend.utils.logger import logger
-from backend.utils.models.playthrough_models import Choice, Turn
+from backend.utils.models.playthrough_models import Choice, Progress, Turn
 from backend.utils.playthrough import Playthrough
 from backend.utils.storyteller import Storyteller
 
@@ -65,32 +65,35 @@ class Game:
     def get_starting_stats(self):
         context: list[Turn] = []
         stats = []
+        progress = Progress(current=1, end=INITIAL_STAT_COUNT)
 
-        for step in range(INITIAL_STAT_COUNT):
+        for step in range(progress.end + 1):
             turn = Turn(user='', ai='')
 
-            response = self.storyteller.get_stat_scenario(context)
+            response = self.storyteller.get_stat_scenario(context, progress)
 
             print(response.full)
 
-            num_choices = len(response.choices)
+            if progress.current <= progress.end:
+                num_choices = len(response.choices)
 
-            print('---CHOICES---')
-            for i in range(num_choices):
-                print(f'{i + 1}: {response.choices[i].choice_description}')
+                print('---CHOICES---')
+                for i in range(num_choices):
+                    print(f'{i + 1}: {response.choices[i].choice_description}')
 
-            choice_index = int(input(f'Choose (1 - {num_choices}): ')) - 1
+                choice_index = int(input(f'Choose (1 - {num_choices}): ')) - 1
 
-            if choice_index not in range(0, num_choices):
-                break
+                if choice_index not in range(0, num_choices):
+                    break
 
-            choice = response.choices[choice_index]
+                choice = response.choices[choice_index]
 
-            turn.user = choice.choice_description
-            turn.ai = response.condensed
+                turn.user = choice.choice_description
+                turn.ai = response.condensed
 
-            stats.append(choice.type)
-            context.append(turn)
+                stats.append(choice.type)
+                context.append(turn)
+                progress.current += 1
 
         return stats
 

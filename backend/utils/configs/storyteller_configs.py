@@ -17,6 +17,7 @@ STYLE_CONSTRAINTS = [
     "The response must begin with '{' and end with '}'. Do not include any text outside the JSON object.",
     'Escape double quotes with a backslash if they appear inside a string.',
     'DO NOT include a "choices: ..." section in the "full" value of the object.',
+    'DO NOT summarize previous context; assume that was described adequately in previous interactions.'
     "Write exclusively in second person, always referring to the player as 'you'.",
     "The 'full' field must contain only immersive narrative prose. Do not include summaries, labels, or meta commentary.",
     'Use concrete sensory details (sound, texture, temperature, smell) instead of abstract or vague concepts.',
@@ -97,13 +98,29 @@ A choice (of type Choice) follows this format:
 STAT_FORMAT: str = dedent("""
 Construct your response as a single, valid JSON object following this schema:
 {
-    "full" (str): "entire description of events (150-300 words; longer for important scenes, shorter for unimportant)",
+    "full" (str): "entire description of events (~200 words)",
     "condensed" (str): "short description of events; keep only essentials that affect future story logic (50-100 words / 3-4 sentences)",
     "choices" (list[Choice]]): "available options for the player to proceed; must be unique and make sense for the narrative (e.g. [{"choice_description": "option 1", "type": "force"}, ...])"
 }
 """).strip()
 
-STAT_PROMPT = f"""Generate a scenario (following the context if provided) that will determine a characters personality/skills.
+STAT_PROMPT = f"""This scenario is a short, self-contained character creation arc.
+- The entire arc must resolve cleanly within 4 interactions total.
+- Each interaction represents a formative moment in the character's past.
+- Do NOT introduce long-term plots, unresolved mysteries, or future hooks.
+- This arc must feel complete and conclusive by the final interaction.
+
+Progression expectations:
+- Early interactions (1): establish background, temperament, and instincts.
+- Middle interactions (2-3): test values, force tradeoffs, or reveal flaws.
+- Final interaction (4): should be a culminating moment and morally gray, where the player truly needs to think
+- Resolution: describe the results of the player's final choice and end the mini-arc in a satisfying way without leaving any hanging threads
+
+Final interaction rules:
+- Choices should feel decisive and identity-defining.
+- The narrative should naturally conclude the formative experience.
+- Do NOT introduce new factions, villains, or future threats.
+- The outcome should feel like a foundation for the main story, not its beginning.
 
 {CHOICE_SCHEMA}
 

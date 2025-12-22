@@ -38,3 +38,8 @@ class Choice(BaseModel):
 class Turn(BaseModel):
     user: str
     ai: str
+
+
+class Progress(BaseModel):
+    current: int
+    end: int

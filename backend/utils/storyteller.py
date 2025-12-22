@@ -11,7 +11,7 @@ from backend.utils.configs.storyteller_configs import (
     STAT_PROMPT,
     STYLE_CONSTRAINTS,
 )
-from backend.utils.models.playthrough_models import Turn
+from backend.utils.models.playthrough_models import Progress, Turn
 from backend.utils.models.storyteller_models import (
     Response,
     StoryOutcome,
@@ -45,6 +45,8 @@ class Storyteller:
         self.choice_schema = CHOICE_SCHEMA
         self.format = FORMAT
         self.progression_description = PROGRESSION_DESCRIPTION
+        self.starting_prompt = STARTING_PROMPT
+        self.stat_prompt = STAT_PROMPT
 
     def request_story(self, messages: list[Message]) -> Response:
         """
@@ -82,8 +84,19 @@ class Storyteller:
 
             return failed_response
 
-    def get_stat_scenario(self, context: list[Turn]) -> Response:
-        message: list[Message] = [{'role': 'system', 'content': STAT_PROMPT}]
+    def get_stat_scenario(self, context: list[Turn], progress: Progress) -> Response:
+        if progress.current <= progress.end:
+            progress_context = (
+                f'\nInteraction Progress: {progress.current} / {progress.end}'
+            )
+        else:
+            progress_context = "\nAll interactions are complete; describe a satisfying resolution based on the player's final choice."
+
+        prompt = self.stat_prompt + progress_context
+
+        print(f'Interaction Progress: {progress.current} / {progress.end}')
+
+        message: list[Message] = [{'role': 'system', 'content': prompt}]
         if context:
             message += self.generate_context_messages(context)
 
@@ -98,7 +111,7 @@ class Storyteller:
         """
         message = [
             self.generate_system_message(),
-            STARTING_PROMPT,
+            self.starting_prompt,
         ]
 
         return self.request_story(message)
