@@ -1,7 +1,6 @@
 from datetime import datetime
 from pathlib import Path
 
-from backend.utils.character import Character
 from backend.utils.configs.game_configs import INITIAL_STAT_COUNT
 from backend.utils.logger import logger
 from backend.utils.models.playthrough_models import Choice, Progress, Turn
@@ -62,31 +61,50 @@ class Game:
             f.write('---TURN SUMMARY---\n')
             f.write(turn_summary)
 
+    def get_choice(self, choices: list[Choice]) -> Choice:
+        """
+        Get a list of choices and return the choice player decides on
+
+        Args:
+            choices (list[Choice]): list of choices
+
+        Returns:
+            Choice: decision player makes
+        """
+        num_choices = len(choices)
+
+        print('---CHOICES---')
+        for i in range(num_choices):
+            print(f'{i + 1}: {choices[i].choice_description}')
+
+        choice_index = int(input(f'Choose (1 - {num_choices}): ')) - 1
+
+        return choices[choice_index]
+
     def get_starting_stats(self):
+        """
+        Generates a short character creation sequence and returns the stats corresponding to player choices
+
+        Returns:
+            list[str]: list of stats for relevant character
+        """
         context: list[Turn] = []
-        stats = []
+        stats: list[str] = []
         progress = Progress(current=1, end=INITIAL_STAT_COUNT)
 
-        for step in range(progress.end + 1):
+        for i in range(progress.end + 1):
             turn = Turn(user='', ai='')
 
             response = self.storyteller.get_stat_scenario(context, progress)
 
+            print('---FULL---')
             print(response.full)
+            print('\n---CONDENSED---')
+            print(response.condensed)
+            print()
 
             if progress.current <= progress.end:
-                num_choices = len(response.choices)
-
-                print('---CHOICES---')
-                for i in range(num_choices):
-                    print(f'{i + 1}: {response.choices[i].choice_description}')
-
-                choice_index = int(input(f'Choose (1 - {num_choices}): ')) - 1
-
-                if choice_index not in range(0, num_choices):
-                    break
-
-                choice = response.choices[choice_index]
+                choice = self.get_choice(response.choices)
 
                 turn.user = choice.choice_description
                 turn.ai = response.condensed
@@ -98,6 +116,12 @@ class Game:
         return stats
 
     def increment_stats(self, stats: list[str]):
+        """
+        Get a list of stats and increment corresponding stats of player character
+
+        Args:
+            stats (list[str]): list of stats
+        """
         for stat in stats:
             if self.playthrough.mc:
                 player_stats = self.playthrough.mc.stats
@@ -142,25 +166,16 @@ class Game:
             if not choices:
                 outcome = self.storyteller.generate_outcome(history)
             else:
-                num_choices = len(choices)
-                # Display all choices to user
-                print('---CHOICES---')
-                for i in range(0, num_choices):
-                    print(f'{i + 1}: {choices[i].choice_description}')
-
-                choice_index = int(input(f'Choose (1 - {num_choices}): ')) - 1
-
-                if choice_index not in range(0, num_choices):
-                    break
+                choice = self.get_choice(choices)
 
                 # Determine level of success of choice and add tags
                 # Assemble 'user' portion of turn
                 # Update tension, act score, stat progression, tags
 
                 # Generate outcome based on decision
-                turn.user = choices[choice_index].choice_description
+                turn.user = choice.choice_description
                 outcome = self.storyteller.generate_outcome(
-                    history, choices[choice_index].choice_description
+                    history, choice.choice_description
                 )
 
             # Update story state

@@ -32,6 +32,8 @@ class Storyteller:
         style_constraints (list[str]): stylistic rules LLM must follow
         action_constraints (list[str]): action rules LLM must follow
         format (str): schema which LLM response must match
+        starting_prompt (str): prompt for opening sequence
+        stat_prompt (str): prompt for character creation sequence
     """
 
     client = Groq(
@@ -85,16 +87,26 @@ class Storyteller:
             return failed_response
 
     def get_stat_scenario(self, context: list[Turn], progress: Progress) -> Response:
+        """
+        Generate a character-defining scenario based on context and progress level
+
+        Args:
+            context (list[Turn]): previous interactions in character-creation sequence
+            progress (Progress): progress in character creation process
+
+        Returns:
+            Response: scenario and relevant choices
+        """
         if progress.current <= progress.end:
             progress_context = (
                 f'\nInteraction Progress: {progress.current} / {progress.end}'
             )
         else:
-            progress_context = "\nAll interactions are complete; describe a satisfying resolution based on the player's final choice."
+            progress_context = "\nAll interactions are complete; describe a satisfying resolution based on the player's final choice; offer no future choices"
 
         prompt = self.stat_prompt + progress_context
 
-        print(f'Interaction Progress: {progress.current} / {progress.end}')
+        print(progress_context)
 
         message: list[Message] = [{'role': 'system', 'content': prompt}]
         if context:

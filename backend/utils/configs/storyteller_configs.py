@@ -98,16 +98,17 @@ A choice (of type Choice) follows this format:
 STAT_FORMAT: str = dedent("""
 Construct your response as a single, valid JSON object following this schema:
 {
-    "full" (str): "entire description of events (~200 words)",
-    "condensed" (str): "short description of events; keep only essentials that affect future story logic (50-100 words / 3-4 sentences)",
+    "full" (str): "entire description of events (~300 words)",
+    "condensed" (str): "short description of events; keep only essentials that affect future story logic (150 words / 3-6 sentences)",
     "choices" (list[Choice]]): "available options for the player to proceed; must be unique and make sense for the narrative (e.g. [{"choice_description": "option 1", "type": "force"}, ...])"
 }
 """).strip()
 
 STAT_PROMPT = f"""This scenario is a short, self-contained character creation arc.
 - The entire arc must resolve cleanly within 4 interactions total.
+- Try to make the arc's story unique (i.e. no child being cornered by wolves)
 - Each interaction represents a formative moment in the character's past.
-- Do NOT introduce long-term plots, unresolved mysteries, or future hooks.
+- Do not introduce new plots outside this mini-arc, but allow consequences and reactions from prior choices to carry forward naturally.
 - This arc must feel complete and conclusive by the final interaction.
 
 Progression expectations:
@@ -119,10 +120,16 @@ Progression expectations:
 Final interaction rules:
 - Choices should feel decisive and identity-defining.
 - The narrative should naturally conclude the formative experience.
-- Do NOT introduce new factions, villains, or future threats.
 - The outcome should feel like a foundation for the main story, not its beginning.
 
 {CHOICE_SCHEMA}
 
 {STAT_FORMAT}
+
+- DO NOT describe the choices "full" section of the response (that's what the "choices" section is for); instead, only describe the story and outcomes based on previous choice; Bad examples:
+    - "You stand at a crossroads: do you secure the village further, investigate the source of the wolves' desperation, or seize the brief calm for your own needs?"
+    - "The decision now rests on how you will address the obstructed road, shaping how the village will see you in the hours to come."
+- DO NOT describe the player character's personality (the game engine will determine that); only describe reactions by the environment/npcs to the player character's decisions
+- ALWAYS progress the story based on the players last choice.
+- DO NOT summarize previous context; assume that was adequately achieved in previous interactions
 """
