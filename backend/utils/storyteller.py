@@ -1,6 +1,6 @@
 import os
 
-from backend.utils.configs.storyteller_configs import (
+from backend.utils.configs.llm_configs import (
     ACTION_CONSTRAINTS,
     CHOICE_SCHEMA,
     FORMAT,
@@ -11,8 +11,8 @@ from backend.utils.configs.storyteller_configs import (
     STAT_PROMPT,
     STYLE_CONSTRAINTS,
 )
-from backend.utils.models.playthrough_models import Progress, Turn
-from backend.utils.models.storyteller_models import (
+from backend.utils.models.game_models import Progress, Turn
+from backend.utils.models.llm_models import (
     Response,
     StoryOutcome,
     SystemMessageContent,

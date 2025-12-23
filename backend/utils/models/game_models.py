@@ -11,11 +11,26 @@ class Difficulty(str, Enum):
     EXTREME = 'extreme'
 
 
+class Intent(str, Enum):
+    CAREFUL = 'careful'
+    STANDARD = 'standard'
+    BOLD = 'bold'
+    DESPERATE = 'desperate'
+
+
 class Stat(str, Enum):
     FORCE = 'force'
     GUILE = 'guile'
     INFLUENCE = 'influence'
     INSIGHT = 'insight'
+
+
+class Success(str, Enum):
+    C_FAIL = 'CRITICAL FAILURE'
+    FAIL = 'FAILURE'
+    PARTIAL = 'PARTIAL SUCCESS'
+    SUCCESS = 'SUCCESS'
+    C_SUCCESS = 'CRITICAL SUCCESS'
 
 
 DEFAULT_STAT_VALUE = 0

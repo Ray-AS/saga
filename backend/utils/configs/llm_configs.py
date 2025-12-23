@@ -31,6 +31,8 @@ STYLE_CONSTRAINTS = [
 ACTION_CONSTRAINTS = [
     "Never control the player character. Describe only the consequences of the player's chosen action.",
     'If you accidentally violate player agency or describe unchosen outcomes, you MUST immediately rewrite the response to fix the issue before replying.'
+    'Ensure the described outcome matches the level of success attached to the player choice (CRITICAL FAILURE -> Terrible outcome, PARTIAL SUCCESS -> Somewhat decent outcome) [Options: "CRITICAL FAILURE", "FAIL", "PARTIAL SUCCESS", "SUCCESS", "CRITICAL SUCCESS"]'
+    'Ensure the described outcome matches the level of intent attached to the player choice (Careful + SUCCESS -> low reward, Careful + FAIL -> low punishment, Desperate + SUCCESS -> high reward, Desperate + FAIL -> high punishment, etc.) [Options: "careful", "standard", "bold", "desperate"]'
     # 'Ensure outcomes are unbiased and realistic. Success is not guaranteed; failure and neutral results must occur when justified.',
     'Every scene must have a clear objective. Once it is achieved or failed, end the scene and transition.',
     # 'If the player repeats the same type of action more than twice, force a decisive change (success, failure, or irreversible consequence).',
@@ -81,7 +83,7 @@ STARTING_PROMPT: Message = {
 }
 
 # CHARACTER CREATION PROMPTSs
-CHOICE_SCHEMA: str = dedent("""
+STAT_CHOICE_SCHEMA: str = dedent("""
 Description Categories:
 - Force: physical prowess; endurance; violence
 - Guile: stealth; deception; misdirection
@@ -122,7 +124,7 @@ Final interaction rules:
 - The narrative should naturally conclude the formative experience.
 - The outcome should feel like a foundation for the main story, not its beginning.
 
-{CHOICE_SCHEMA}
+{STAT_CHOICE_SCHEMA}
 
 {STAT_FORMAT}
 

@@ -1,6 +1,6 @@
 from typing import NamedTuple
 
-from backend.utils.models.playthrough_models import Choice
+from backend.utils.models.game_models import Choice
 from groq.types.chat import ChatCompletionMessageParam as Message
 from pydantic import BaseModel
 

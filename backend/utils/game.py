@@ -1,9 +1,23 @@
+import random
 from datetime import datetime
 from pathlib import Path
 
-from backend.utils.configs.game_configs import INITIAL_STAT_COUNT
+from backend.utils.configs.game_configs import (
+    DC,
+    INITIAL_STAT_COUNT,
+    INTENT,
+    PROGRESS_VALUES,
+    STAT_PROGRESS_LIMIT,
+)
 from backend.utils.logger import logger
-from backend.utils.models.playthrough_models import Choice, Progress, Turn
+from backend.utils.models.game_models import (
+    Choice,
+    Intent,
+    Progress,
+    Stat,
+    Success,
+    Turn,
+)
 from backend.utils.playthrough import Playthrough
 from backend.utils.storyteller import Storyteller
 
@@ -43,9 +57,7 @@ class Game:
             turn_summary (str): joined and formatted play-by-play of each turn
         """
         filename = ''
-
-        if self.playthrough.mc:
-            filename += f'{self.playthrough.mc.name}_'
+        filename += f'{self.playthrough.mc.name}_'
 
         current_datetime = datetime.now()
         timestamp_str = current_datetime.strftime('%Y-%m-%d_%H-%M-%S')
@@ -80,6 +92,22 @@ class Game:
         choice_index = int(input(f'Choose (1 - {num_choices}): ')) - 1
 
         return choices[choice_index]
+
+    def get_intent(self):
+        """
+        Determine the intent of the player and return corresponding modifier
+
+        Returns:
+            int: modifier for chosen intent
+        """
+        print('---INTENTS---')
+        for index, intent in enumerate(Intent, start=1):
+            print(f'{index}: {intent.value}')
+
+        intent_index = int(input(f'Choose (1 - {len(Intent)}): ')) - 1
+
+        chosen_intent = list(Intent)[intent_index]
+        return (INTENT[chosen_intent], chosen_intent.value)
 
     def get_starting_stats(self):
         """
@@ -123,10 +151,9 @@ class Game:
             stats (list[str]): list of stats
         """
         for stat in stats:
-            if self.playthrough.mc:
-                player_stats = self.playthrough.mc.stats
-                current = getattr(player_stats, stat)
-                setattr(player_stats, stat, current + 1)
+            player_stats = self.playthrough.mc.stats
+            current = getattr(player_stats, stat)
+            setattr(player_stats, stat, current + 1)
 
     def start_story(self):
         """
@@ -139,7 +166,6 @@ class Game:
         name = input('Enter character name: ')
         self.playthrough.generate_character(name)
         self.increment_stats(self.get_starting_stats())
-        assert self.playthrough.mc is not None
         logger.log_stats(self.playthrough.mc.stats)
 
         # Generate a random start to a story
@@ -150,6 +176,17 @@ class Game:
         self.update_playthrough(starting_event.full, turn)
 
         return starting_event.choices
+
+    def update_stat_progress(self, type: Stat, success: Success):
+        stat_progress = self.playthrough.mc.stat_progress
+        print(stat_progress)
+        stat_progress[type] += PROGRESS_VALUES[success]
+        if stat_progress[type] >= STAT_PROGRESS_LIMIT:
+            print(self.playthrough.mc.stats)
+            self.increment_stats([type])
+            print(self.playthrough.mc.stats)
+            stat_progress[type] -= STAT_PROGRESS_LIMIT
+        print(stat_progress)
 
     def play(self):
         """Creates the interactive story game loop and continues until user enters and invalid choice"""
@@ -168,12 +205,43 @@ class Game:
             else:
                 choice = self.get_choice(choices)
 
-                # Determine level of success of choice and add tags
+                if choice.difficulty:
+                    difficulty = DC[choice.difficulty]
+                else:
+                    raise TypeError('Value of difficulty none.')
+
+                roll = random.randint(1, 20)
+                intent = self.get_intent()
+                stat_modifier = getattr(self.playthrough.mc.stats, choice.type)
+                print(roll, intent, stat_modifier)
+
+                total = roll + intent[0] + stat_modifier
+
+                if roll == 1:
+                    success = Success.C_FAIL
+                elif roll == 20:
+                    success = Success.C_SUCCESS
+                elif total < difficulty - 2:
+                    success = Success.FAIL
+                elif total > difficulty + 2:
+                    success = Success.SUCCESS
+                else:
+                    success = Success.PARTIAL
+
+                self.update_stat_progress(choice.type, success)
+
+                print(f'Roll: {roll}, Intent: {intent}, Stat: {stat_modifier}')
+                print(total)
+                print(success)
+                # Determine level of success of choice
                 # Assemble 'user' portion of turn
-                # Update tension, act score, stat progression, tags
+                # Update tension, act score, stat progression
 
                 # Generate outcome based on decision
-                turn.user = choice.choice_description
+                turn.user = (
+                    choice.choice_description
+                    + f' (Success Level: {success.value} | Intent Level: {intent[1]})'
+                )
                 outcome = self.storyteller.generate_outcome(
                     history, choice.choice_description
                 )

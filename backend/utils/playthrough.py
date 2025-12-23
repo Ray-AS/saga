@@ -1,6 +1,6 @@
 from backend.utils.character import Character
 from backend.utils.logger import logger
-from backend.utils.models.playthrough_models import Turn
+from backend.utils.models.game_models import Turn
 
 
 class Playthrough:
@@ -18,7 +18,7 @@ class Playthrough:
         self.history: list[Turn] = []
 
         # Irrelevant for now
-        self.mc: Character | None = None
+        self.mc: Character = Character()
 
     def generate_character(self, name: str):
         """
@@ -27,7 +27,7 @@ class Playthrough:
         Args:
             name (str): name of character
         """
-        self.mc = Character(name)
+        self.mc.name = name
         logger.log_character_generated(self.mc.name)
 
     def generate_story_summary(self):

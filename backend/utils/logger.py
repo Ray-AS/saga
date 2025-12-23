@@ -1,6 +1,6 @@
 import json
 
-from backend.utils.models.playthrough_models import StatBlock, Turn
+from backend.utils.models.game_models import StatBlock, Turn
 
 
 class Logger:
