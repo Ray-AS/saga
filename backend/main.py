@@ -2,7 +2,6 @@ from backend.adapters.cli import CLIAdapter
 from backend.game.engine import GameEngine
 from backend.game.state import PlaythroughState
 from backend.llm.storyteller import Storyteller
-from backend.utils.configs.game_configs import DC
 from backend.utils.logger import logger
 
 
@@ -25,7 +24,7 @@ def main():
         intent_mod, intent = ui.choose_intent()
 
         success, turn = engine.resolve_turn(
-            state, choice, intent_mod, DC[choice.difficulty]
+            state, choice, intent_mod, choice.difficulty
         )
 
         logger.log_turn_resolution(

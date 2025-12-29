@@ -19,7 +19,7 @@ from backend.utils.models.game_models import (
     Turn,
 )
 from backend.utils.playthrough import Playthrough
-from backend.utils.storyteller import Storyteller
+from backend.old.storyteller import Storyteller
 
 
 class Game:
