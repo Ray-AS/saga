@@ -33,28 +33,22 @@ class Success(str, Enum):
     C_SUCCESS = 'CRITICAL SUCCESS'
 
 
-DEFAULT_STAT_VALUE = 0
 StatValue = Annotated[int, Field(ge=0, le=5)]
 
 
 class StatBlock(BaseModel):
-    force: StatValue = DEFAULT_STAT_VALUE
-    guile: StatValue = DEFAULT_STAT_VALUE
-    influence: StatValue = DEFAULT_STAT_VALUE
-    insight: StatValue = DEFAULT_STAT_VALUE
+    force: StatValue = 0
+    guile: StatValue = 0
+    influence: StatValue = 0
+    insight: StatValue = 0
 
 
 class Choice(BaseModel):
     choice_description: str
-    difficulty: Difficulty | None = None
+    difficulty: Difficulty
     type: Stat
 
 
 class Turn(BaseModel):
     user: str
     ai: str
-
-
-class Progress(BaseModel):
-    current: int
-    end: int

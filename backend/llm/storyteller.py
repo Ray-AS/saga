@@ -1,0 +1,96 @@
+from backend.llm.client import LLMClient
+from backend.llm.prompts.choices import CHOICE_PROMPT
+from backend.llm.prompts.story import STORY_PROMPT
+from backend.llm.prompts.system import SYSTEM_PROMPT
+from backend.llm.validation import parse_or_repair
+from backend.models.game import Intent, Success, Turn
+from backend.models.llm import ChoiceResponse, StoryResponse
+from groq.types.chat import ChatCompletionMessageParam as Message
+
+MODEL_LIST = [
+    'llama-3.3-70b-versatile',
+    'openai/gpt-oss-120b',
+]
+MODEL = MODEL_LIST[1]
+
+
+class Storyteller:
+    def __init__(self):
+        self.client = LLMClient()
+
+    # 🔹 START OF STORY (NO PLAYER ACTION)
+    def generate_start(self) -> tuple[StoryResponse, ChoiceResponse]:
+        messages: list[Message] = [
+            {'role': 'system', 'content': SYSTEM_PROMPT},
+            {
+                'role': 'user',
+                'content': 'Generate the opening scene of a new interactive story.',
+            },
+        ]
+
+        story_raw = self.client.chat(messages, MODEL)
+        if not story_raw:
+            raise ValueError('LLM did not provide story response')
+
+        story = StoryResponse.model_validate(parse_or_repair(story_raw, StoryResponse))
+
+        choices_raw = self.client.chat(
+            messages + [{'role': 'user', 'content': CHOICE_PROMPT}],
+            MODEL,
+        )
+        if not choices_raw:
+            raise ValueError('LLM did not provide choice response')
+
+        choices = ChoiceResponse.model_validate(
+            parse_or_repair(choices_raw, ChoiceResponse)
+        )
+
+        return story, choices
+
+    # 🔹 NORMAL TURN RESOLUTION
+    def generate_turn(
+        self,
+        history: list[Turn],
+        action: str,
+        success: Success,
+        intent: str,
+    ) -> tuple[StoryResponse, ChoiceResponse]:
+        messages: list[Message] = [{'role': 'system', 'content': SYSTEM_PROMPT}]
+
+        for t in history:
+            messages.append({'role': 'user', 'content': t.user})
+            messages.append({'role': 'assistant', 'content': t.ai})
+
+        story_raw = self.client.chat(
+            messages
+            + [
+                {
+                    'role': 'user',
+                    'content': STORY_PROMPT.format(
+                        action=action,
+                        success=success.value,
+                        intent=intent,
+                    ),
+                }
+            ],
+            MODEL,
+        )
+
+        if not story_raw:
+            raise ValueError('LLM did not provide story response')
+
+        story = StoryResponse.model_validate(parse_or_repair(story_raw, StoryResponse))
+
+        choices_raw = self.client.chat(
+            messages + [{'role': 'user', 'content': CHOICE_PROMPT}],
+            MODEL,
+        )
+
+        if not choices_raw:
+            raise ValueError('LLM did not provide choice response')
+
+        choices = ChoiceResponse.model_validate(
+            parse_or_repair(choices_raw, ChoiceResponse)
+        )
+
+        return story, choices

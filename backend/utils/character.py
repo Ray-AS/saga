@@ -1,4 +1,4 @@
-from backend.utils.models.game_models import Stat, StatBlock
+from backend.models.game import Stat, StatBlock
 
 
 class Character:

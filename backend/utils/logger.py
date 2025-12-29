@@ -1,26 +1,38 @@
-import json
+import logging
 
-from backend.utils.models.game_models import StatBlock, Turn
+from backend.game.state import PlaythroughState
+from backend.models.game import Choice
 
-
-class Logger:
-    def __init__(self):
-        pass
-
-    def log_story(self, story: str, turn: Turn):
-        print('---STORY---')
-        print(story)
-        print('---TURN---')
-        print(turn.model_dump_json(indent=4))
-
-    def log_character_generated(self, name: str):
-        print(f'CHARACTER CREATED (Name: {name})')
-
-    def log_stats(self, stats: StatBlock):
-        print(stats.model_dump_json(indent=4))
-
-    def pretty_print_json(self, data):
-        print(json.dumps(data, indent=4, ensure_ascii=False))
+logging.basicConfig(level=logging.INFO)
 
 
-logger = Logger()
+class GameLogger:
+    def info(self, msg: str):
+        logging.info(msg)
+
+    def log_story(self, text: str):
+        logging.info('STORY:\n%s', text)
+
+    def log_choices(self, choices: list[Choice]):
+        for c in choices:
+            logging.info(
+                'CHOICE: %s | %s | %s',
+                c.choice_description,
+                c.type,
+                c.difficulty,
+            )
+
+    def log_state(self, state: PlaythroughState):
+        logging.info('STATS: %s', state.character.stats)
+        logging.info('PROGRESS: %s', state.character.stat_progress)
+
+    def log_turn_resolution(self, choice: str, success: str, intent: str):
+        logging.info(
+            'TURN: %s | SUCCESS=%s | INTENT=%s',
+            choice,
+            success,
+            intent,
+        )
+
+
+logger = GameLogger()
