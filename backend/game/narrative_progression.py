@@ -23,11 +23,11 @@ PROGRESS_SPEEDS = {
         Success.C_SUCCESS: 0.4,
     },
     'lightning': {
-        Success.C_FAIL: 0.25,
-        Success.FAIL: 0.3,
-        Success.PARTIAL: 0.35,
-        Success.SUCCESS: 0.45,
-        Success.C_SUCCESS: 0.5,
+        Success.C_FAIL: 0.3,
+        Success.FAIL: 0.4,
+        Success.PARTIAL: 0.5,
+        Success.SUCCESS: 0.6,
+        Success.C_SUCCESS: 0.7,
     },
 }
 
