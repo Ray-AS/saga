@@ -1,5 +1,5 @@
+from backend.game.character import Character
 from backend.models.game import Stat, Success
-from backend.utils.character import Character
 
 PROGRESS_VALUES = {
     Success.C_FAIL: -1,

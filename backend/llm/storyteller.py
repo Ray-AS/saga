@@ -1,6 +1,6 @@
 from backend.llm.client import LLMClient
 from backend.llm.prompts.choices import CHOICE_PROMPT
-from backend.llm.prompts.story import STORY_PROMPT
+from backend.llm.prompts.story import STORY_PROMPT_START, STORY_PROMPT_TURN
 from backend.llm.prompts.system import SYSTEM_PROMPT
 from backend.llm.validation import parse_or_repair
 from backend.models.game import Success, Turn
@@ -24,11 +24,12 @@ class Storyteller:
             {'role': 'system', 'content': SYSTEM_PROMPT},
             {
                 'role': 'user',
-                'content': 'Generate the opening scene of a new interactive story.',
+                'content': STORY_PROMPT_START,
             },
         ]
 
         story_raw = self.client.chat(messages, MODEL)
+
         if not story_raw:
             raise ValueError('LLM did not provide story response')
 
@@ -38,6 +39,7 @@ class Storyteller:
             messages + [{'role': 'user', 'content': CHOICE_PROMPT}],
             MODEL,
         )
+
         if not choices_raw:
             raise ValueError('LLM did not provide choice response')
 
@@ -66,7 +68,7 @@ class Storyteller:
             + [
                 {
                     'role': 'user',
-                    'content': STORY_PROMPT.format(
+                    'content': STORY_PROMPT_TURN.format(
                         action=action,
                         success=success.value,
                         intent=intent,

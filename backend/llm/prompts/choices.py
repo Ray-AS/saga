@@ -2,6 +2,18 @@ CHOICE_PROMPT = """
 Generate 4 distinct choices.
 Each must:
 - Have a clear approach
-- Use a stat (force, guile, influence, insight)
-- Have realistic difficulty
+- Use a Stat: ("force", "guile", "influence", "insight")
+- Have realistic Difficulty: ("easy", "medium", "hard", "extreme")
+
+Choice Format:
+{{
+  "choice_description" (str): "description of choice",
+  "difficulty" (Difficulty): "difficulty rating of choice",
+  "type" (Stat): "stat that corresponds to choice"
+}}
+
+Response must follow this JSON schema:
+{{
+  "choices" list[Choice]: [Choice 1, Choice 2, Choice 3, Choice 4]
+}}
 """

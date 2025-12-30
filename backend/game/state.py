@@ -1,5 +1,5 @@
+from backend.game.character import Character
 from backend.models.game import Turn
-from backend.utils.character import Character
 
 
 class PlaythroughState:
