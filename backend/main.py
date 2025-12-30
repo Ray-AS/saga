@@ -9,6 +9,7 @@ from backend.utils.uploader import FileUploader
 
 
 def main():
+    # Create game/llm objects
     state = PlaythroughState()
     engine = GameEngine()
     storyteller = Storyteller()
@@ -17,13 +18,15 @@ def main():
 
     logger.info('GAME_START')
 
+    # Generate opening sequence and choices
     story, choice_block = storyteller.generate_start()
+    print('-----------------------------------')
     logger.log_story(story.full)
-    print()
+    print('-----------------------------------')
 
     choices = choice_block.choices
     logger.log_choices(choices)
-    print()
+    print('-----------------------------------')
 
     while True:
         choice = ui.choose(choices)
@@ -37,13 +40,15 @@ def main():
             state, choice, intent_mod, choice.difficulty
         )
 
+        print('-----------------------------------')
         logger.log_turn_resolution(
             choice=choice.choice_description,
             success=success.value,
             intent=intent,
         )
-        print()
+        print('-----------------------------------')
 
+        # Generate next sequence based on choice/success level
         story, choice_block = storyteller.generate_turn(
             state.history, choice.choice_description, success, intent, state.narrative
         )
@@ -52,12 +57,14 @@ def main():
         turn.ai = story.condensed
         state.record_turn(story.full, turn)
 
+        print('-----------------------------------')
         logger.log_story(story.full)
-        print()
+        print('-----------------------------------')
         logger.log_state(state)
-        print()
+        print('-----------------------------------')
 
         if story.is_ending:
+            # Check if story ended at valid progression
             if not (
                 state.narrative.act == Act.RESOLUTION
                 and state.narrative.progress >= 0.85
@@ -70,10 +77,11 @@ def main():
                 act=state.narrative.act,
                 progress=state.narrative.progress,
             )
+            print('-----------------------------------')
             break
 
         logger.log_choices(choice_block.choices)
-        print()
+        print('-----------------------------------')
 
         allow_ending = (
             state.narrative.act == Act.RESOLUTION and state.narrative.progress >= 0.85
@@ -84,7 +92,6 @@ def main():
             progress=state.narrative.progress,
             allow_ending=allow_ending,
         )
-        print()
 
         from_act = state.narrative.act
 
@@ -97,7 +104,6 @@ def main():
                 from_act=from_act,
                 to_act=to_act,
             )
-            print()
 
         allow_ending = (
             state.narrative.act == Act.RESOLUTION and state.narrative.progress >= 0.85
@@ -108,7 +114,7 @@ def main():
             progress=state.narrative.progress,
             allow_ending=allow_ending,
         )
-        print()
+        print('-----------------------------------')
 
     uploader.output_to_file(state.story, state.history, MODEL)
 

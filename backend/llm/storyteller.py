@@ -14,7 +14,7 @@ MODEL_LIST = [
     'llama-3.3-70b-versatile',
     'openai/gpt-oss-120b',
 ]
-MODEL = MODEL_LIST[1]
+MODEL = MODEL_LIST[0]
 
 
 class Storyteller:
