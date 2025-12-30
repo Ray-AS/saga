@@ -1,7 +1,7 @@
 import logging
 
 from backend.game.state import PlaythroughState
-from backend.models.game import Choice
+from backend.models.game import Act, Choice
 
 logging.basicConfig(level=logging.INFO)
 
@@ -32,6 +32,36 @@ class GameLogger:
             choice,
             success,
             intent,
+        )
+
+    def log_narrative_state(self, act: Act, progress: float, allow_ending: bool):
+        logging.info(
+            'NARRATIVE STATE | act=%s | progress=%.2f | allow_ending=%s',
+            act.name,
+            progress,
+            allow_ending,
+        )
+
+    def log_narrative_transition(
+        self,
+        from_act: Act,
+        to_act: Act,
+    ):
+        logging.info(
+            'NARRATIVE_TRANSITION | %s → %s',
+            from_act.name,
+            to_act.name,
+        )
+
+    def log_story_end(
+        self,
+        act: Act,
+        progress: float,
+    ):
+        logging.info(
+            'STORY_END | act=%s | progress=%.2f',
+            act.name,
+            progress,
         )
 
 

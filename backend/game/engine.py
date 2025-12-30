@@ -1,5 +1,5 @@
-from backend.game.progression import apply_stat_progress
 from backend.game.rules import determine_success, roll_d20
+from backend.game.stat_progression import apply_stat_progress
 from backend.game.state import PlaythroughState
 from backend.models.game import Choice, Difficulty, Turn
 

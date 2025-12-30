@@ -8,6 +8,14 @@ from pydantic import BaseModel, field_validator
 class StoryResponse(BaseModel):
     full: str
     condensed: str
+    is_ending: bool = False
+
+    @classmethod
+    def default(cls):
+        return {
+            'full': 'No advancement in story',
+            'condensed': 'No advancement in story',
+        }
 
     @field_validator('full')
     @classmethod
@@ -26,6 +34,18 @@ class StoryResponse(BaseModel):
 
 class ChoiceResponse(BaseModel):
     choices: list[Choice]
+
+    @classmethod
+    def default(cls):
+        return {
+            'choices': [
+                {
+                    'choice_description': 'Pause and reassess the situation.',
+                    'type': 'INSIGHT',
+                    'difficulty': 'EASY',
+                }
+            ]
+        }
 
     @field_validator('choices')
     @classmethod

@@ -4,6 +4,12 @@ from typing import Annotated
 from pydantic import BaseModel, Field
 
 
+class Act(Enum):
+    SETUP = 1
+    ESCALATION = 2
+    RESOLUTION = 3
+
+
 class Difficulty(str, Enum):
     EASY = 'easy'
     MEDIUM = 'medium'
@@ -52,3 +58,8 @@ class Choice(BaseModel):
 class Turn(BaseModel):
     user: str
     ai: str
+
+
+class NarrativeState(BaseModel):
+    act: Act = Act.SETUP
+    progress: float = 0.0
