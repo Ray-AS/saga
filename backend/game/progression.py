@@ -17,3 +17,5 @@ def apply_stat_progress(character: Character, stat: Stat, success: Success):
     if character.stat_progress[stat] >= STAT_PROGRESS_LIMIT:
         setattr(character.stats, stat.value, getattr(character.stats, stat.value) + 1)
         character.stat_progress[stat] -= STAT_PROGRESS_LIMIT
+    elif character.stat_progress[stat] < 0:
+        character.stat_progress[stat] = 0

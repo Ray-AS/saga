@@ -1,8 +1,9 @@
 from backend.adapters.cli import CLIAdapter
 from backend.game.engine import GameEngine
 from backend.game.state import PlaythroughState
-from backend.llm.storyteller import Storyteller
+from backend.llm.storyteller import MODEL, Storyteller
 from backend.utils.logger import logger
+from backend.utils.uploader import FileUploader
 
 
 def main():
@@ -10,6 +11,7 @@ def main():
     engine = GameEngine()
     storyteller = Storyteller()
     ui = CLIAdapter()
+    uploader = FileUploader()
 
     logger.info('GAME_START')
 
@@ -21,6 +23,10 @@ def main():
 
     while True:
         choice = ui.choose(choices)
+
+        if choice == 'END':
+            break
+
         intent_mod, intent = ui.choose_intent()
 
         success, turn = engine.resolve_turn(
@@ -44,6 +50,8 @@ def main():
         logger.log_story(story.full)
         logger.log_state(state)
         logger.log_choices(choice_block.choices)
+
+    uploader.output_to_file(state.story, state.history, MODEL)
 
 
 if __name__ == '__main__':

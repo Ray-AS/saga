@@ -12,7 +12,13 @@ class CLIAdapter:
     def choose(self, choices: list[Choice]):
         for i, c in enumerate(choices, 1):
             print(f'{i}. {c.choice_description}')
-        return choices[int(input('> ')) - 1]
+
+        choice = input('> ')
+
+        if choice == 'END':
+            return 'END'
+
+        return choices[int(choice) - 1]
 
     def choose_intent(self):
         for i, intent in enumerate(Intent, 1):
