@@ -3,8 +3,8 @@ Generate story
 
 Respond with immersive prose only. Response must follow this JSON schema:
 {{
-  "full" (str): "complete description of story progression (200-300 words)",
-  "condensed" (str): "shorter description of event and key points (~100 words)"
+  "full" (str): "complete description of story (200-300 words; limit: 400 words)",
+  "condensed" (str): "shorter description of event and key points (~100 words; limit: 200 words)"
 }}
 """
 
@@ -18,7 +18,7 @@ Intent: {intent}
 
 Respond with immersive prose only. Response must follow this JSON schema:
 {{
-  "full" (str): "complete description of story progression (200-300 words)",
-  "condensed" (str): "shorter description of event and key points (~100 words)"
+  "full" (str): "complete description of story progression (200-300 words; limit: 400 words)",
+  "condensed" (str): "shorter description of event and key points (~100 words; limit: 200 words)"
 }}
 """
