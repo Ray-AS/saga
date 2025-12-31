@@ -1,5 +1,5 @@
 CHOICE_PROMPT = """
-Generate 4 distinct choices.
+Generate 4 distinct choices based on provided story.
 Each must:
 - Have a clear approach
 - Use a Stat: ("force", "guile", "influence", "insight")
@@ -16,4 +16,6 @@ Response must follow this JSON schema:
 {{
   "choices" list[Choice]: [Choice 1, Choice 2, Choice 3, Choice 4]
 }}
+
+DO NOT return the story along with the choices (Bad: "full": "...", Bad: "condensed": "...")
 """

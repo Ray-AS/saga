@@ -38,7 +38,9 @@ class Storyteller:
         story = StoryResponse.model_validate(parse_or_repair(story_raw, StoryResponse))
 
         choices_raw = self.client.chat(
-            messages + [{'role': 'user', 'content': CHOICE_PROMPT}],
+            messages
+            + [{'role': 'assistant', 'content': f'NEW STORY: {story.condensed}'}]
+            + [{'role': 'user', 'content': CHOICE_PROMPT}],
             MODEL,
         )
 
@@ -108,7 +110,9 @@ class Storyteller:
         story = StoryResponse.model_validate(parse_or_repair(story_raw, StoryResponse))
 
         choices_raw = self.client.chat(
-            messages + [{'role': 'user', 'content': CHOICE_PROMPT}],
+            messages
+            + [{'role': 'assistant', 'content': f'NEW STORY: {story.condensed}'}]
+            + [{'role': 'user', 'content': CHOICE_PROMPT}],
             MODEL,
         )
 

@@ -1,6 +1,7 @@
 import logging
 
 from backend.game.state import PlaythroughState
+from backend.models.api import ChoiceWithID
 from backend.models.game import Act, Choice
 
 logging.basicConfig(level=logging.INFO)
@@ -13,7 +14,7 @@ class GameLogger:
     def log_story(self, text: str):
         logging.info('STORY:\n%s', text)
 
-    def log_choices(self, choices: list[Choice]):
+    def log_choices(self, choices: list[Choice] | list[ChoiceWithID]):
         for c in choices:
             logging.info(
                 'CHOICE: %s | %s | %s',
