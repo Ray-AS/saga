@@ -63,7 +63,7 @@ class Turn(BaseModel):
 class NarrativeState(BaseModel):
     act: Act = Act.SETUP
     progress: float = 0.0
-    
+
     @property
     def allow_ending(self):
         return self.act == Act.RESOLUTION and self.progress >= 0.85

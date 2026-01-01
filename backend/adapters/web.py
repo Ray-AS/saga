@@ -24,7 +24,7 @@ class WebAdapter:
         self.storyteller = Storyteller()
         self.uploader = FileUploader()
         self.states: dict[str, PlaythroughState] = {}
-    
+
     def load_all_states(self):
         ids = self.uploader.list_files()
         for id in ids:
@@ -81,7 +81,9 @@ class WebAdapter:
         data = state.to_dict()
         self.uploader.save(data, id)
 
-        print(state.narrative.act, state.narrative.progress, state.narrative.allow_ending)
+        print(
+            state.narrative.act, state.narrative.progress, state.narrative.allow_ending
+        )
 
         return StoryAdvanceResponse(
             playthrough_id=id,
