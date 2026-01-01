@@ -8,6 +8,22 @@ app = FastAPI()
 adapter = WebAdapter()
 
 
+@app.get('/game')
+def list_playthroughs():
+    adapter.load_all_states()
+    
+    response = {'playthroughs': []}
+    for id in adapter.states.keys():
+        response['playthroughs'].append({
+            'playthrough_id': id,
+            'act': adapter.states[id].narrative.act.name,
+            'progress': adapter.states[id].narrative.progress,
+            'can_end': adapter.states[id].narrative.allow_ending,
+            'summary': adapter.storyteller.summarize_story(adapter.states[id].history),
+        })
+    return response
+
+
 @app.post('/game/start')
 def start_story():
     response = adapter.start()

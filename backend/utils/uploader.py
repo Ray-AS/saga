@@ -72,3 +72,10 @@ class FileUploader:
             return True
         else:
             return False
+        
+    def list_files(self) -> list[str]:
+        files = []
+        for file in self.db_dir.iterdir():
+            if file.is_file() and file.suffix == '.json':
+                files.append(file.name.replace('.json', ''))
+        return files

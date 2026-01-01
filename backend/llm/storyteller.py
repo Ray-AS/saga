@@ -123,3 +123,28 @@ class Storyteller:
         )
 
         return story, choices
+
+    def summarize_story(self, history: list[Turn]) -> str:
+        messages: list[Message] = [
+            {'role': 'system', 'content': SYSTEM_PROMPT},
+        ]
+
+        for t in history:
+            messages.append({'role': 'user', 'content': t.user})
+            messages.append({'role': 'assistant', 'content': t.ai})
+
+        summary_raw: str = self.client.chat(
+            messages
+            + [
+                {
+                    'role': 'user',
+                    'content': 'Provide a 10-15 word, hooking summary of the story so far. Just a sentence, nothing else. DO NOT give any additional text (e.g. "story": or "Here is the summary"). DO NOT elaborate beyond the summary sentence.',
+                }
+            ],
+            MODEL,
+        )
+
+        if not summary_raw:
+            raise ValueError('LLM did not provide story summary')
+
+        return summary_raw.strip()

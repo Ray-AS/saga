@@ -24,6 +24,12 @@ class WebAdapter:
         self.storyteller = Storyteller()
         self.uploader = FileUploader()
         self.states: dict[str, PlaythroughState] = {}
+    
+    def load_all_states(self):
+        ids = self.uploader.list_files()
+        for id in ids:
+            data = self.uploader.load(id)
+            self.states[id] = PlaythroughState.from_dict(data)
 
     def start(self):
         story, choice_block = self.storyteller.generate_start()
@@ -39,7 +45,6 @@ class WebAdapter:
         id = self.uploader.save(data)
 
         self.states[id] = state
-
 
         return StoryStartResponse(
             playthrough_id=id,
