@@ -1,7 +1,6 @@
 from backend.adapters.web import WebAdapter
 from backend.game.state import PlaythroughState
 from backend.models.api import ChoiceInfo
-from backend.utils.logger import logger
 from fastapi import FastAPI
 
 app = FastAPI()
@@ -11,16 +10,20 @@ adapter = WebAdapter()
 @app.get('/game')
 def list_playthroughs():
     adapter.load_all_states()
-    
+
     response = {'playthroughs': []}
     for id in adapter.states.keys():
-        response['playthroughs'].append({
-            'playthrough_id': id,
-            'act': adapter.states[id].narrative.act.name,
-            'progress': adapter.states[id].narrative.progress,
-            'can_end': adapter.states[id].narrative.allow_ending,
-            'summary': adapter.storyteller.summarize_story(adapter.states[id].history),
-        })
+        response['playthroughs'].append(
+            {
+                'playthrough_id': id,
+                'act': adapter.states[id].narrative.act.name,
+                'progress': adapter.states[id].narrative.progress,
+                'can_end': adapter.states[id].narrative.allow_ending,
+                'summary': adapter.storyteller.summarize_story(
+                    adapter.states[id].history
+                ),
+            }
+        )
     return response
 
 
@@ -44,10 +47,10 @@ def get_playthrough(id: str):
 
     state = adapter.states[id]
     return {
-        "playthrough_id": id,
-        "full": state.story[-1] if state.story else "",
-        "condensed": state.history[-1].ai if state.history else "",
-        "choices": state.current_choices,
+        'playthrough_id': id,
+        'full': state.story[-1] if state.story else '',
+        'condensed': state.history[-1].ai if state.history else '',
+        'choices': state.current_choices,
     }
 
 
