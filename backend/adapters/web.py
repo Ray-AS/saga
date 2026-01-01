@@ -1,3 +1,4 @@
+from backend.database.db_uploader import DBUploader
 from backend.game.engine import GameEngine
 from backend.game.narrative_progression import advance_narrative
 from backend.game.state import PlaythroughState
@@ -8,7 +9,9 @@ from backend.models.api import (
     StoryStartResponse,
 )
 from backend.models.game import Choice, Intent, Turn
-from backend.utils.uploader import FileUploader
+from sqlalchemy.orm import Session
+
+# from backend.utils.uploader import FileUploader
 
 INTENT_MOD = {
     Intent.CAREFUL: 2,
@@ -19,17 +22,23 @@ INTENT_MOD = {
 
 
 class WebAdapter:
-    def __init__(self):
+    def __init__(self, db: Session):
         self.engine = GameEngine()
         self.storyteller = Storyteller()
-        self.uploader = FileUploader()
+        self.uploader = DBUploader(db)
         self.states: dict[str, PlaythroughState] = {}
 
     def load_all_states(self):
-        ids = self.uploader.list_files()
+        ids = self.uploader.list_ids()
         for id in ids:
             data = self.uploader.load(id)
             self.states[id] = PlaythroughState.from_dict(data)
+
+    def get_state(self, id: str) -> PlaythroughState:
+        if id not in self.states:
+            data = self.uploader.load(id)
+            self.states[id] = PlaythroughState.from_dict(data)
+        return self.states[id]
 
     def start(self):
         story, choice_block = self.storyteller.generate_start()
@@ -43,7 +52,6 @@ class WebAdapter:
 
         data = state.to_dict()
         id = self.uploader.save(data)
-
         self.states[id] = state
 
         return StoryStartResponse(
@@ -54,11 +62,7 @@ class WebAdapter:
         )
 
     def advance(self, id: str, choice: ChoiceInfo):
-        if id not in self.states:
-            data = self.uploader.load(id)
-            self.states[id] = PlaythroughState.from_dict(data)
-
-        state = self.states[id]
+        state = self.get_state(id)
 
         intent_mod = INTENT_MOD[choice.intent]
         success, turn = self.engine.resolve_turn(
