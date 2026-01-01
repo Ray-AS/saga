@@ -18,3 +18,7 @@ class StoryAdvancementResponse(BaseModel):
             if 'id' not in c.model_fields_set:
                 raise KeyError('choice(s) does not contain id')
         return v
+
+
+class StoryStartResponse(StoryAdvancementResponse):
+    playthrough_id: str

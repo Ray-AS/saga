@@ -1,10 +1,16 @@
+import json
 from datetime import datetime
 from pathlib import Path
+from uuid import uuid4
 
 from backend.models.game import Turn
 
 
 class FileUploader:
+    def __init__(self) -> None:
+        self.db_dir = Path(__file__).parent.parent / 'data'
+        self.db_dir.mkdir(parents=True, exist_ok=True)
+
     def generate_story_summary(self, story: list[str]):
         complete_story = '---STORY SUMMARY---\n' + '\n\n'.join(story)
         return complete_story
@@ -41,3 +47,16 @@ class FileUploader:
             f.write(story_output)
             f.write('\n\n')
             f.write(turn_output)
+
+    def save(self, data: dict, playthrough_id: str = ''):
+        if playthrough_id == '':
+            playthrough_id = str(uuid4())
+        filepath = self.db_dir / f'{playthrough_id}.json'
+        with open(filepath, 'w') as f:
+            json.dump(data, f, indent=2)
+        return playthrough_id
+
+    def load(self, playthrough_id: str):
+        filepath = self.db_dir / f'{playthrough_id}.json'
+        with open(filepath, 'r') as f:
+            return json.load(f)

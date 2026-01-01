@@ -6,8 +6,8 @@ app = FastAPI()
 adapter = WebAdapter()
 
 
-@app.get('/')
-def index():
+@app.post('/game/start')
+def start():
     response = adapter.start()
     logger.log_story(response.full)
     logger.log_choices(response.choices)

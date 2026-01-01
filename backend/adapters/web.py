@@ -3,8 +3,12 @@ from backend.game.engine import GameEngine
 from backend.game.narrative_progression import advance_narrative
 from backend.game.state import PlaythroughState
 from backend.llm.storyteller import MODEL, Storyteller
-from backend.models.api import ChoiceWithID, StoryAdvancementResponse
-from backend.models.game import Act, Choice
+from backend.models.api import (
+    ChoiceWithID,
+    StoryAdvancementResponse,
+    StoryStartResponse,
+)
+from backend.models.game import Act, Choice, Turn
 from backend.utils.logger import logger
 from backend.utils.uploader import FileUploader
 
@@ -32,9 +36,17 @@ class WebAdapter:
 
     def start(self):
         story, choice_block = self.storyteller.generate_start()
+
+        initial_turn = Turn(user='[Character created]', ai=story.condensed)
+        self.state.record_turn(story.full, initial_turn)
+
+        data = self.state.to_dict()
+        id = self.uploader.save(data)
+
         choices = choice_block.choices
 
-        return StoryAdvancementResponse(
+        return StoryStartResponse(
+            playthrough_id=id,
             full=story.full,
             condensed=story.condensed,
             choices=self.generate_choices_with_ids(choices),
