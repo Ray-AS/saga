@@ -60,3 +60,15 @@ class FileUploader:
         filepath = self.db_dir / f'{playthrough_id}.json'
         with open(filepath, 'r') as f:
             return json.load(f)
+
+    def delete(self, filename: str):
+        if '.json' not in filename:
+            raise ValueError('File not a .json file')
+
+        filepath = self.db_dir / filename
+
+        if filepath.is_file():
+            filepath.unlink()
+            return True
+        else:
+            return False
