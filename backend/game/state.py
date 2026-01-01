@@ -1,5 +1,5 @@
 from backend.game.character import Character
-from backend.models.game import NarrativeState, Turn
+from backend.models.game import Act, NarrativeState, StatBlock, Turn
 
 
 class PlaythroughState:
@@ -36,11 +36,11 @@ class PlaythroughState:
 
         character_data = data.get('character', {})
         state.character.name = character_data.get('name', '')
-        state.character.stats = character_data.get('stats', {})
+        state.character.stats = StatBlock(**character_data.get('stats', {}))
         state.character.stat_progress = character_data.get('stat_progress', {})
 
         narrative_data = data.get('narrative', {})
-        state.narrative.act = narrative_data.get('act', '')
-        state.narrative.progress = narrative_data.get('act', 0.0)
+        state.narrative.act = Act[narrative_data.get('act', '')]
+        state.narrative.progress = narrative_data.get('progress', 0.0)
 
         return state

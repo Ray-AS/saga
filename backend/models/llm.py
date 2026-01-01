@@ -41,8 +41,8 @@ class ChoiceResponse(BaseModel):
             'choices': [
                 {
                     'choice_description': 'Pause and reassess the situation.',
-                    'type': 'INSIGHT',
-                    'difficulty': 'EASY',
+                    'type': 'insight',
+                    'difficulty': 'easy',
                 }
             ]
         }

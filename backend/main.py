@@ -36,9 +36,7 @@ def main():
 
         intent_mod, intent = ui.choose_intent()
 
-        success, turn = engine.resolve_turn(
-            state, choice, intent_mod, choice.difficulty
-        )
+        success, turn = engine.resolve_turn(state, choice, intent_mod)
 
         print('-----------------------------------')
         logger.log_turn_resolution(

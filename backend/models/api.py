@@ -1,24 +1,17 @@
-from backend.models.game import Choice
-from pydantic import BaseModel, field_validator
+from backend.models.game import Choice, Intent, Success
+from pydantic import BaseModel
 
 
-class ChoiceWithID(Choice):
-    id: int
-
-
-class StoryAdvancementResponse(BaseModel):
+class StoryStartResponse(BaseModel):
+    playthrough_id: str
     full: str
     condensed: str
-    choices: list[ChoiceWithID]
-
-    @field_validator('choices')
-    @classmethod
-    def validate_choices_have_ids(cls, v: list[BaseModel]):
-        for c in v:
-            if 'id' not in c.model_fields_set:
-                raise KeyError('choice(s) does not contain id')
-        return v
+    choices: list[Choice]
 
 
-class StoryStartResponse(StoryAdvancementResponse):
-    playthrough_id: str
+class StoryAdvanceResponse(StoryStartResponse):
+    success: Success
+
+
+class ChoiceInfo(Choice):
+    intent: Intent
