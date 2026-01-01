@@ -12,13 +12,14 @@ class DBUploader:
     def __init__(self, db: Session):
         self.db = db
 
+    # get all available session ids
     def list_ids(self):
         sessions = self.db.query(GameSession.id).all()
-        ids = [str(s.id) for s in sessions]
-        return ids
+        session_ids = [str(s.id) for s in sessions]
+        return session_ids
 
     def save(self, state: dict, session_id: str = ''):
-        char_data = state['character']
+        character_data = state['character']
 
         if session_id != '':
             game_session = (
@@ -29,17 +30,19 @@ class DBUploader:
                 raise ValueError('Session does not exist')
 
             character = game_session.character
-            character.name = char_data['name']
-            character.stats = char_data['stats']
-            character.stat_progress = char_data['stat_progress']
+            character.name = character_data['name']
+            character.stats = character_data['stats']
+            character.stat_progress = character_data['stat_progress']
         else:
+            # generate new character if no session id provided
             character = Character(
-                name=char_data['name'],
-                stats=char_data['stats'],
-                stat_progress=char_data['stat_progress'],
+                name=character_data['name'],
+                stats=character_data['stats'],
+                stat_progress=character_data['stat_progress'],
             )
 
             self.db.add(character)
+            # stage changes
             self.db.flush()
 
             game_session = GameSession(
@@ -49,17 +52,22 @@ class DBUploader:
             )
 
             self.db.add(game_session)
+            # stage changes
             self.db.flush()
 
             session_id = str(game_session.id)
 
+        # delete old data to prepare for replacement
         self.db.query(StoryEntry).filter_by(session_id=game_session.id).delete()
         self.db.query(Choice).filter_by(session_id=game_session.id).delete()
         self.db.query(HistoryEntry).filter_by(session_id=game_session.id).delete()
 
+        # repopulate all session data using current state of playthrough
+        # repopulate story data
         for i, s in enumerate(state['story']):
             self.db.add(StoryEntry(session_id=game_session.id, text=s, order=i))
 
+        # repopulate choice data
         for c in state['choices']:
             self.db.add(
                 Choice(
@@ -70,6 +78,7 @@ class DBUploader:
                 )
             )
 
+        # repopulate turn data
         for i, h in enumerate(state['history']):
             self.db.add(
                 HistoryEntry(
@@ -77,6 +86,7 @@ class DBUploader:
                 )
             )
 
+        # repopulate narrative data
         game_session.act = state['narrative']['act']
         game_session.progress = state['narrative']['progress']
 

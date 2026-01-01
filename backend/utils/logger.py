@@ -1,8 +1,6 @@
 import logging
 
 from backend.game.state import PlaythroughState
-
-# from backend.models.api import ChoiceWithID
 from backend.models.game import Act, Choice
 
 logging.basicConfig(level=logging.INFO)

@@ -15,3 +15,15 @@ class StoryAdvanceResponse(StoryStartResponse):
 
 class ChoiceInfo(Choice):
     intent: Intent
+
+
+class PlaythroughSummary(BaseModel):
+    playthrough_id: str
+    act: str
+    progress: float
+    can_end: bool
+    summary: str
+
+
+class ListPlaythroughsResponse(BaseModel):
+    playthroughs: list[PlaythroughSummary] = []

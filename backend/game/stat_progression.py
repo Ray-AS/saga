@@ -14,6 +14,7 @@ STAT_PROGRESS_LIMIT = 8
 
 def apply_stat_progress(character: Character, stat: Stat, success: Success):
     character.stat_progress[stat] += PROGRESS_VALUES[success]
+
     if character.stat_progress[stat] >= STAT_PROGRESS_LIMIT:
         setattr(character.stats, stat.value, getattr(character.stats, stat.value) + 1)
         character.stat_progress[stat] -= STAT_PROGRESS_LIMIT

@@ -3,6 +3,7 @@ from sqlalchemy import JSON, Column, Float, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 
 
+# all encompassing table schema: relates to story, history, choices, and character
 class GameSession(Base):
     __tablename__ = 'game_sessions'
 
@@ -13,6 +14,7 @@ class GameSession(Base):
         Integer, ForeignKey('characters.id', ondelete='CASCADE'), nullable=False
     )
 
+    # relate session to story, history, etc. tables and ensure when session is deleted, all related elements are also deleted
     story_entries = relationship(
         'StoryEntry',
         back_populates='session',
@@ -31,6 +33,7 @@ class GameSession(Base):
         cascade='all, delete-orphan',
         passive_deletes=True,
     )
+    # one-to-one relationship for character (i.e. character can only belong to one playthrough)
     character = relationship(
         'Character',
         back_populates='session',
@@ -47,6 +50,7 @@ class StoryEntry(Base):
         Integer, ForeignKey('game_sessions.id', ondelete='CASCADE'), nullable=False
     )
     text = Column(String, nullable=False)
+    # ensure story order is preserved when reading back from database
     order = Column(Integer, nullable=False)
 
     session = relationship('GameSession', back_populates='story_entries')
@@ -74,6 +78,7 @@ class HistoryEntry(Base):
     )
     user = Column(String)
     ai = Column(String)
+    # ensure story order is preserved when reading back from database
     order = Column(Integer)
 
     session = relationship('GameSession', back_populates='history_entries')

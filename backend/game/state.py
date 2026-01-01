@@ -14,6 +14,7 @@ class PlaythroughState:
         self.story.append(story)
         self.history.append(turn)
 
+    # convert current state into dictionary
     def to_dict(self):
         return {
             'story': self.story,
@@ -30,14 +31,13 @@ class PlaythroughState:
             },
         }
 
+    # create instance of playthrough based on provided data
     @classmethod
     def from_dict(cls, data: dict):
         state = cls()
         state.story = data.get('story', [])
         state.history = [Turn(**t) for t in data.get('history', [])]
-        state.current_choices = [
-            Choice(**c) for c in data.get('choices', [])
-        ]
+        state.current_choices = [Choice(**c) for c in data.get('choices', [])]
 
         character_data = data.get('character', {})
         state.character.name = character_data.get('name', '')

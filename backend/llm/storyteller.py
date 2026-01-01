@@ -6,7 +6,7 @@ from backend.llm.prompts.choices import CHOICE_PROMPT
 from backend.llm.prompts.story import STORY_PROMPT_START, STORY_PROMPT_TURN
 from backend.llm.prompts.system import SYSTEM_PROMPT
 from backend.llm.validation import parse_or_repair
-from backend.models.game import Act, NarrativeState, Success, Turn
+from backend.models.game import NarrativeState, Success, Turn
 from backend.models.llm import ChoiceResponse, StoryResponse
 from groq.types.chat import ChatCompletionMessageParam as Message
 
@@ -133,7 +133,7 @@ class Storyteller:
             messages.append({'role': 'user', 'content': t.user})
             messages.append({'role': 'assistant', 'content': t.ai})
 
-        summary_raw: str = self.client.chat(
+        summary_raw = self.client.chat(
             messages
             + [
                 {

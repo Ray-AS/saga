@@ -1,15 +1,22 @@
-from backend.adapters.web import WebAdapter
+from backend.adapters.web import GameService
 from backend.database.db import Base, SessionLocal, engine
-from backend.game.state import PlaythroughState
-from backend.models.api import ChoiceInfo
-from fastapi import Depends, FastAPI
+from backend.models.api import (
+    ChoiceInfo,
+    ListPlaythroughsResponse,
+    PlaythroughSummary,
+    StoryAdvanceResponse,
+    StoryStartResponse,
+)
+from fastapi import Body, Depends, FastAPI, HTTPException, Path, status
 from sqlalchemy.orm import Session
 
+# create tables if not exists
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
 
+# dependency function for database
 def get_db():
     db = SessionLocal()
     try:
@@ -18,63 +25,99 @@ def get_db():
         db.close()
 
 
-def get_adapter(db: Session = Depends(get_db)):
-    return WebAdapter(db)
+# create game service dependency
+def get_game_service(db: Session = Depends(get_db)):
+    return GameService(db)
 
 
-@app.get('/game')
-def list_playthroughs(adapter: WebAdapter = Depends(get_adapter)):
-    adapter.load_all_states()
+@app.get(
+    '/game',
+    response_model=ListPlaythroughsResponse,
+    summary='Retrieve all playthroughs in database',
+)
+def list_playthroughs(service: GameService = Depends(get_game_service)):
+    service.load_all_sessions()
 
-    response = {'playthroughs': []}
-    for id in adapter.states.keys():
-        response['playthroughs'].append(
-            {
-                'playthrough_id': id,
-                'act': adapter.states[id].narrative.act.name,
-                'progress': adapter.states[id].narrative.progress,
-                'can_end': adapter.states[id].narrative.allow_ending,
-                'summary': adapter.storyteller.summarize_story(
-                    adapter.states[id].history
-                ),
-            }
+    # return info for all playthroughs: id, narrative state, if it is "allowed to end", and a one-sentence summary
+    response = ListPlaythroughsResponse()
+    for id, state in service.states.items():
+        response.playthroughs.append(
+            PlaythroughSummary(
+                playthrough_id=id,
+                act=state.narrative.act.name,
+                progress=state.narrative.progress,
+                can_end=state.narrative.allow_ending,
+                summary=service.storyteller.summarize_story(state.history),
+            )
         )
     return response
 
 
-@app.post('/game/start')
-def start_story(adapter: WebAdapter = Depends(get_adapter)):
-    response = adapter.start()
-    return response
+@app.post(
+    '/game/start',
+    response_model=StoryStartResponse,
+    status_code=status.HTTP_201_CREATED,
+    summary='Start a new playthrough',
+)
+def start_story(service: GameService = Depends(get_game_service)):
+    return service.start_game()
 
 
-@app.post('/game/{id}/choose')
+@app.post(
+    '/game/{id}/choose',
+    response_model=StoryAdvanceResponse,
+    status_code=status.HTTP_201_CREATED,
+    summary='Advance a playthrough based on player choice',
+)
 def advance_story(
-    id: str, choice_info: ChoiceInfo, adapter: WebAdapter = Depends(get_adapter)
+    id: str = Path(..., description='The ID of the playthrough to advance'),
+    choice_info: ChoiceInfo = Body(
+        ..., description="The player's choice for this turn"
+    ),
+    service: GameService = Depends(get_game_service),
 ):
-    response = adapter.advance(id, choice_info)
-    return response
+    try:
+        return service.advance_game(id, choice_info)
+    except KeyError:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f'Playthrough {id} not found',
+        )
 
 
-@app.get('/game/{id}')
-def get_playthrough(id: str, adapter: WebAdapter = Depends(get_adapter)):
-    state = adapter.get_state(id)
+@app.get(
+    '/game/{id}',
+    response_model=StoryStartResponse,
+    summary='Get the state of the requested playthrough',
+)
+def get_playthrough(
+    id: str = Path(..., description='The ID of the playthrough to retrieve'),
+    service: GameService = Depends(get_game_service),
+):
+    try:
+        state = service.get_session(id)
+    except KeyError:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail=f'Playthrough {id} not found'
+        )
 
-    return {
-        'playthrough_id': id,
-        'full': state.story[-1] if state.story else '',
-        'condensed': state.history[-1].ai if state.history else '',
-        'choices': state.current_choices,
-    }
+    return StoryStartResponse(
+        playthrough_id=id,
+        full=state.story[-1] if state.story else '',
+        condensed=state.history[-1].ai if state.history else '',
+        choices=state.current_choices,
+    )
 
 
-@app.delete('/game/{id}')
-def delete_playthrough(id: str, adapter: WebAdapter = Depends(get_adapter)):
-    response = adapter.uploader.delete(id)
-    if response:
-        return {
-            'message': f'{id}.json successfully deleted.',
-        }
-    return {
-        'message': f'{id}.json not found.',
-    }
+@app.delete(
+    '/game/{id}',
+    status_code=status.HTTP_204_NO_CONTENT,
+    summary='Delete the requested playthrough',
+)
+def delete_playthrough(
+    id: str = Path(..., description='The ID of the playthrough to delete'),
+    service: GameService = Depends(get_game_service),
+):
+    deleted = service.uploader.delete(id)
+    if not deleted:
+        raise HTTPException(status_code=404, detail=f'Playthrough {id} not found.')
