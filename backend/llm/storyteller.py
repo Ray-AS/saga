@@ -62,9 +62,8 @@ class Storyteller:
         narrative: NarrativeState,
     ) -> tuple[StoryResponse, ChoiceResponse]:
         guidelines = ACT_GUIDELINES[narrative.act]
-        allow_ending = narrative.act == Act.RESOLUTION and narrative.progress >= 0.85
 
-        if allow_ending:
+        if narrative.allow_ending:
             ending_rule = 'You **MAY** conclude the story in a satisfying final ending.'
         else:
             ending_rule = 'You **MUST** continue the story and NOT conclude it yet.'

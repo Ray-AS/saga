@@ -1,5 +1,5 @@
 from backend.game.character import Character
-from backend.models.game import Act, NarrativeState, StatBlock, Turn
+from backend.models.game import Act, Choice, NarrativeState, StatBlock, Turn
 
 
 class PlaythroughState:
@@ -8,6 +8,7 @@ class PlaythroughState:
         self.history: list[Turn] = []
         self.character = Character()
         self.narrative = NarrativeState()
+        self.current_choices: list[Choice] = []
 
     def record_turn(self, story: str, turn: Turn):
         self.story.append(story)
@@ -17,6 +18,7 @@ class PlaythroughState:
         return {
             'story': self.story,
             'history': [turn.model_dump() for turn in self.history],
+            'choices': [choice.model_dump() for choice in self.current_choices],
             'character': {
                 'name': self.character.name,
                 'stats': self.character.stats.model_dump(),
@@ -33,6 +35,9 @@ class PlaythroughState:
         state = cls()
         state.story = data.get('story', [])
         state.history = [Turn(**t) for t in data.get('history', [])]
+        state.current_choices = [
+            Choice(**c) for c in data.get('choices', [])
+        ]
 
         character_data = data.get('character', {})
         state.character.name = character_data.get('name', '')

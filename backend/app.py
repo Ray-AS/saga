@@ -1,4 +1,5 @@
 from backend.adapters.web import WebAdapter
+from backend.game.state import PlaythroughState
 from backend.models.api import ChoiceInfo
 from backend.utils.logger import logger
 from fastapi import FastAPI
@@ -10,17 +11,28 @@ adapter = WebAdapter()
 @app.post('/game/start')
 def start_story():
     response = adapter.start()
-    logger.log_story(response.full)
-    logger.log_choices(response.choices)
     return response
 
 
 @app.post('/game/{id}/choose')
 def advance_story(id: str, choice_info: ChoiceInfo):
     response = adapter.advance(id, choice_info)
-    logger.log_story(response.full)
-    logger.log_choices(response.choices)
     return response
+
+
+@app.get('/game/{id}')
+def get_playthrough(id: str):
+    if id not in adapter.states:
+        data = adapter.uploader.load(id)
+        adapter.states[id] = PlaythroughState.from_dict(data)
+
+    state = adapter.states[id]
+    return {
+        "playthrough_id": id,
+        "full": state.story[-1] if state.story else "",
+        "condensed": state.history[-1].ai if state.history else "",
+        "choices": state.current_choices,
+    }
 
 
 @app.delete('/game/{id}')

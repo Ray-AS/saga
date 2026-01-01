@@ -27,18 +27,19 @@ class WebAdapter:
 
     def start(self):
         story, choice_block = self.storyteller.generate_start()
+        choices = choice_block.choices
 
         initial_turn = Turn(user='[Character created]', ai=story.condensed)
 
         state = PlaythroughState()
         state.record_turn(story.full, initial_turn)
+        state.current_choices = choices
 
         data = state.to_dict()
         id = self.uploader.save(data)
 
         self.states[id] = state
 
-        choices = choice_block.choices
 
         return StoryStartResponse(
             playthrough_id=id,
@@ -69,15 +70,18 @@ class WebAdapter:
 
         turn.ai = story.condensed
         state.record_turn(story.full, turn)
+        state.current_choices = choice_block.choices if not story.is_ending else []
         advance_narrative(state.narrative, success)
 
         data = state.to_dict()
         self.uploader.save(data, id)
 
+        print(state.narrative.act, state.narrative.progress, state.narrative.allow_ending)
+
         return StoryAdvanceResponse(
             playthrough_id=id,
             full=story.full,
             condensed=story.condensed,
-            choices=choice_block.choices,
+            choices=choice_block.choices if not story.is_ending else [],
             success=success,
         )
