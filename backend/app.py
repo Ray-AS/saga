@@ -1,4 +1,4 @@
-from backend.adapters.web import GameService
+from backend.adapters.service import GameService
 from backend.database.db import Base, SessionLocal, engine
 from backend.models.api import (
     ChoiceInfo,
