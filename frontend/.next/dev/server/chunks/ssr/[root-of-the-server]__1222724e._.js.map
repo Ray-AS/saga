@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": [],
-  "sections": [
-    {"offset": {"line": 18, "column": 0}, "map": {"version":3,"sources":["file:///home/ray/Documents/vscode/projects/saga/frontend/app/page.tsx"],"sourcesContent":["export default function Home() {\n  return (\n    <main>Hello world!</main>\n  );\n}\n"],"names":[],"mappings":";;;;;;AAAe,SAAS;IACtB,qBACE,8OAAC;kBAAK;;;;;;AAEV"}}]
-}
