@@ -1,25 +1,25 @@
-enum Difficulty {
+export enum Difficulty {
   EASY = 'easy',
   MEDIUM = 'medium',
   HARD = 'hard',
   EXTREME = 'extreme',
 }
 
-enum Stat {
+export enum Stat {
   FORCE = 'force',
   GUILE = 'guile',
   INFLUENCE = 'influence',
   INSIGHT = 'insight',
 }
 
-enum Intent {
+export enum Intent {
   CAREFUL = 'careful',
   STANDARD = 'standard',
   BOLD = 'bold',
   DESPERATE = 'desperate',
 }
 
-enum Success{
+export enum Success{
   C_FAIL = 'CRITICAL FAILURE',
   FAIL = 'FAILURE',
   PARTIAL = 'PARTIAL SUCCESS',
@@ -35,7 +35,7 @@ interface Choice {
 
 interface PlaythroughSummary {
   readonly playthroughID: string
-  readonly act: string
+  readonly act: "SETUP" | "ESCALATION" | "RESOLUTION"
   readonly progress: number
   readonly canEnd: boolean
   readonly summary: string
