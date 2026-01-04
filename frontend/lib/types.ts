@@ -56,6 +56,11 @@ export interface StoryAdvance extends StoryStart {
   readonly success: Success
 }
 
+export interface StoryRecap {
+  readonly playthroughID: string
+  readonly story: string[]
+}
+
 export interface ListPlaythroughs {
   readonly playthroughs: PlaythroughSummary[]
 }
