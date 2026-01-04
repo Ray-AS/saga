@@ -27,7 +27,7 @@ export enum Success{
   C_SUCCESS = 'CRITICAL SUCCESS',
 }
 
-interface Choice {
+export interface Choice {
   readonly choiceDescription: string
   readonly difficulty: Difficulty
   readonly type: Stat
@@ -51,6 +51,8 @@ export interface StoryStart {
   readonly condensed: string
   readonly choices: Choice[]
 }
+
+export type StoryWithoutID = Omit<StoryStart, "playthroughID">
 
 export interface StoryAdvance extends StoryStart {
   readonly success: Success
