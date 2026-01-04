@@ -5,6 +5,7 @@ from backend.models.api import (
     ListPlaythroughsResponse,
     PlaythroughSummary,
     StoryAdvanceResponse,
+    StoryRecapResponse,
     StoryStartResponse,
 )
 from fastapi import Body, Depends, FastAPI, HTTPException, Path, status
@@ -121,3 +122,25 @@ def delete_playthrough(
     deleted = service.uploader.delete(id)
     if not deleted:
         raise HTTPException(status_code=404, detail=f'Playthrough {id} not found.')
+
+
+@app.get(
+    '/game/{id}/story',
+    response_model=StoryRecapResponse,
+    summary='Get the complete story so far of given playthrough',
+)
+def get_story_so_far(
+    id: str = Path(..., description='The ID of the playthrough to retrieve'),
+    service: GameService = Depends(get_game_service),
+):
+    try:
+        state = service.get_session(id)
+    except KeyError:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail=f'Playthrough {id} not found'
+        )
+
+    return StoryRecapResponse(
+        playthrough_id=id,
+        story=state.story[:-1] if state.story else [],
+    )

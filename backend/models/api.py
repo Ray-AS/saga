@@ -13,6 +13,11 @@ class StoryAdvanceResponse(StoryStartResponse):
     success: Success
 
 
+class StoryRecapResponse(BaseModel):
+    playthrough_id: str
+    story: list[str]
+
+
 class ChoiceInfo(Choice):
     intent: Intent
 
