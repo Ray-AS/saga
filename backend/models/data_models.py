@@ -1,6 +1,7 @@
-from backend.database.db import Base
 from sqlalchemy import JSON, Column, Float, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
+
+from backend.database.db import Base
 
 
 # all encompassing table schema: relates to story, history, choices, and character

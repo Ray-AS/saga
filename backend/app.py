@@ -1,3 +1,6 @@
+from fastapi import Body, Depends, FastAPI, HTTPException, Path, status
+from sqlalchemy.orm import Session
+
 from backend.adapters.service import GameService
 from backend.database.db import Base, SessionLocal, engine
 from backend.models.api import (
@@ -8,8 +11,6 @@ from backend.models.api import (
     StoryRecapResponse,
     StoryStartResponse,
 )
-from fastapi import Body, Depends, FastAPI, HTTPException, Path, status
-from sqlalchemy.orm import Session
 
 # create tables if not exists
 Base.metadata.create_all(bind=engine)

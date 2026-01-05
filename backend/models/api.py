@@ -1,5 +1,6 @@
-from backend.models.game import Choice, Intent, Success
 from pydantic import BaseModel
+
+from backend.models.game import Choice, Intent, Success
 
 
 class StoryStartResponse(BaseModel):

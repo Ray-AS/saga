@@ -1,8 +1,9 @@
 from typing import NamedTuple
 
-from backend.models.game import Choice
 from groq.types.chat import ChatCompletionMessageParam as Message
 from pydantic import BaseModel, field_validator
+
+from backend.models.game import Choice
 
 
 class StoryResponse(BaseModel):

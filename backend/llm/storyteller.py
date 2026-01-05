@@ -1,5 +1,7 @@
 from textwrap import dedent
 
+from groq.types.chat import ChatCompletionMessageParam as Message
+
 from backend.llm.client import LLMClient
 from backend.llm.prompts.act import ACT_GUIDELINES
 from backend.llm.prompts.choices import CHOICE_PROMPT
@@ -8,7 +10,6 @@ from backend.llm.prompts.system import SYSTEM_PROMPT
 from backend.llm.validation import parse_or_repair
 from backend.models.game import NarrativeState, Success, Turn
 from backend.models.llm import ChoiceResponse, StoryResponse
-from groq.types.chat import ChatCompletionMessageParam as Message
 
 MODEL_LIST = [
     'llama-3.3-70b-versatile',

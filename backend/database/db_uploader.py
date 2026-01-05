@@ -1,3 +1,5 @@
+from sqlalchemy.orm import Session
+
 from backend.models.data_models import (
     Character,
     Choice,
@@ -5,7 +7,6 @@ from backend.models.data_models import (
     HistoryEntry,
     StoryEntry,
 )
-from sqlalchemy.orm import Session
 
 
 class DBUploader:

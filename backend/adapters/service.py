@@ -1,3 +1,5 @@
+from sqlalchemy.orm import Session
+
 from backend.database.db_uploader import DBUploader
 from backend.game.engine import GameEngine
 from backend.game.narrative_progression import advance_narrative
@@ -9,7 +11,6 @@ from backend.models.api import (
     StoryStartResponse,
 )
 from backend.models.game import Choice, Intent, Turn
-from sqlalchemy.orm import Session
 
 INTENT_MOD = {
     Intent.CAREFUL: 2,
