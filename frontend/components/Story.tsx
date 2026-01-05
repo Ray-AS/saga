@@ -1,8 +1,9 @@
 'use client'
 
-import { StoryWithoutID } from "@/lib/types";
+import { Choice, StoryWithoutID } from "@/lib/types";
 import { useState } from "react";
 import ChoiceButton from "./ChoiceButton";
+import { getStoryTurn } from "@/lib/mock";
 
 interface StoryProps {
   id: string;
@@ -16,8 +17,14 @@ export default function Story({ id, initialStory, initialTurn }: StoryProps) {
 
   const storyElements = story.map((s, i) => <p key={i}>{s}</p>);
   const choiceElements = turn.choices.map((c, i) => (
-    <ChoiceButton key={i} choice={c} />
+    <ChoiceButton key={i} choice={c} handleClick={handleChoice} />
   ));
+
+  async function handleChoice(choice: Choice) {
+    const { playthroughID, success, ...currentTurn  } = await getStoryTurn(id, choice);
+    setStory(prev => ([...prev, turn.full]));
+    setTurn(currentTurn)
+  }
 
   return (
     <>

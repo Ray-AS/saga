@@ -1,4 +1,4 @@
-import { StoryAdvance, Difficulty, Stat, StoryStart, Success, ListPlaythroughs, StoryRecap } from "./types";
+import { StoryAdvance, Difficulty, Stat, StoryStart, Success, ListPlaythroughs, StoryRecap, Choice } from "./types";
 
 const mockStart: StoryStart = {
   playthroughID: "1",
@@ -68,14 +68,14 @@ export async function getStoryStart() {
   return mockStart
 }
 
-export async function getStoryTurn() {
+export async function getStoryTurn(id: string, choice: Choice) {
   await new Promise((r) => setTimeout(r, 500));
   return mockTurn
 }
 
-export const getSavedStory = getStoryStart;
+export const getSavedStory = (id: string) => getStoryStart();
 
-export async function getStoryRecap() {
+export async function getStoryRecap(id: string) {
   await new Promise((r) => setTimeout(r, 500));
   return mockStory;
 }
@@ -83,4 +83,12 @@ export async function getStoryRecap() {
 export async function getPlaythroughList() {
   await new Promise((r) => setTimeout(r, 500));
   return mockPlaythroughList
+}
+
+export async function deletePlaythrough(id: string) {
+  await new Promise((r) => setTimeout(r, 500));
+  return {
+    status: 200,
+    response: {message: `Playthrough ${id} deleted`}
+  }
 }

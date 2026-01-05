@@ -33,7 +33,7 @@ export interface Choice {
   readonly type: Stat
 }
 
-interface PlaythroughSummary {
+export interface PlaythroughSummary {
   readonly playthroughID: string
   readonly act: "SETUP" | "ESCALATION" | "RESOLUTION"
   readonly progress: number
