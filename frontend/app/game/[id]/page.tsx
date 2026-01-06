@@ -6,8 +6,9 @@ interface GamePageProps {
 }
 
 export default async function GamePage({ params }: GamePageProps) {
-  const storySoFar = (await getStoryRecap(params.id)).story;
-  const { playthroughID, ...currentTurn } = await getSavedStory(params.id);
+  const { id } = await params;
+  const storySoFar = (await getStoryRecap(id)).story;
+  const { playthroughID, ...currentTurn } = await getSavedStory(id);
 
   return (
     <>
