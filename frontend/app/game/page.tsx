@@ -1,4 +1,5 @@
 import PlaythroughCard from "@/components/PlaythroughCard";
+import StartGameButton from "@/components/StartGameButton";
 import { getPlaythroughList } from "@/lib/mock";
 import { startGame } from "@/lib/start";
 
@@ -10,12 +11,11 @@ export default async function GameList() {
   ));
 
   return (
-    <>
-      <h1>Playthroughs</h1>
-      {playthroughElements}
-      <form action={startGame}>
-        <button type="submit">Start</button>
-      </form>
-    </>
+    <main className="flex flex-col justify-center items-center gap-8">
+      <StartGameButton />
+      <section className="max-w-xl flex flex-wrap gap-8 justify-center">
+        {playthroughElements}
+      </section>
+    </main>
   );
 }
