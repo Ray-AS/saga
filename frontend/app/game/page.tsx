@@ -1,7 +1,6 @@
 import PlaythroughCard from "@/components/PlaythroughCard";
 import StartGameButton from "@/components/StartGameButton";
 import { getPlaythroughList } from "@/lib/mock";
-import { startGame } from "@/lib/start";
 
 export default async function GameList() {
   const { playthroughs } = await getPlaythroughList();
