@@ -10,9 +10,9 @@ export default async function GameList() {
   ));
 
   return (
-    <main className="flex flex-col justify-center items-center gap-8">
+    <main className="flex flex-col items-center justify-center gap-8">
       <StartGameButton />
-      <section className="max-w-xl flex flex-wrap gap-8 justify-center">
+      <section className="flex max-w-xl flex-wrap justify-center gap-8">
         {playthroughElements}
       </section>
     </main>

@@ -10,14 +10,14 @@ export default function PlaythroughCard({
   playthrough: p,
 }: PlaythroughCardProps) {
   return (
-    <div className="w-50 flex flex-col gap-2 items-center">
+    <div className="flex h-55 w-60 flex-col items-center gap-2 p-4 shadow-lg/50 shadow-neutral-950">
       <div className="text-lg">Playthrough {p.playthroughID}</div>
       <div>{p.summary}</div>
       <div>
         Act: {p.act} ({p.progress * 100}%)
       </div>
       {p.canEnd ? <div>In endgame</div> : null}
-      <div className="w-full flex justify-between">
+      <div className="mt-auto flex w-full justify-between">
         <PlaythroughNavigateButton id={p.playthroughID} />
         <PlaythroughDeleteButton id={p.playthroughID} />
       </div>

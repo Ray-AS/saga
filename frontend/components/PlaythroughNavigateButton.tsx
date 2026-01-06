@@ -12,7 +12,7 @@ export default function PlaythroughNavigateButton({ id }: { id: string }) {
   return (
     <button
       onClick={resumePlaythrough}
-      className="w-20 h-8 text-base cursor-pointer shadow-md shadow-black/50 active:translate-y-0.5 active:shadow-zinc-900"
+      className="h-8 w-20 cursor-pointer text-base shadow-md shadow-black/75 transition hover:bg-neutral-800 active:translate-y-0.5 active:shadow-black/20"
     >
       Resume
     </button>

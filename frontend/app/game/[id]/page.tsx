@@ -12,7 +12,6 @@ export default async function GamePage({ params }: GamePageProps) {
 
   return (
     <>
-      <h1>Playthrough</h1>
       <Story
         id={playthroughID}
         initialStory={storySoFar}

@@ -3,7 +3,7 @@ import StartGameButton from "@/components/StartGameButton";
 
 export default function Home() {
   return (
-    <main className="flex flex-col justify-center items-center gap-4">
+    <main className="flex flex-col items-center justify-center gap-4">
       <StartGameButton />
       <LoadGameButton />
     </main>
