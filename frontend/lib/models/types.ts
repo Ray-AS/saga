@@ -66,3 +66,10 @@ export interface StoryRecap {
 export interface ListPlaythroughs {
   readonly playthroughs: PlaythroughSummary[];
 }
+
+export interface PlaythroughBasic {
+  playthroughID: string;
+  full: string
+  condensed: string
+  choices: Choice[]
+}

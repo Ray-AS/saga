@@ -1,9 +1,9 @@
 "use client";
 
-import { Choice, StoryWithoutID } from "@/lib/types";
+import { Choice, StoryWithoutID } from "@/lib/models/types";
 import { useState } from "react";
 import ChoiceButton from "./ChoiceButton";
-import { getStoryTurn } from "@/lib/mock";
+import { getStoryTurn } from "@/lib/mocks/mock";
 
 interface StoryProps {
   id: string;

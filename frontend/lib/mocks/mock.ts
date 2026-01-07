@@ -7,7 +7,7 @@ import {
   ListPlaythroughs,
   StoryRecap,
   Choice,
-} from "./types";
+} from "../models/types";
 
 const mockStart: StoryStart = {
   playthroughID: "1",

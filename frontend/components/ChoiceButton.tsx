@@ -1,4 +1,4 @@
-import { Choice } from "@/lib/types";
+import { Choice } from "@/lib/models/types";
 
 interface ChoiceProps {
   choice: Choice;

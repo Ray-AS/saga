@@ -1,5 +1,6 @@
 import Story from "@/components/Story";
-import { getSavedStory, getStoryRecap } from "@/lib/mock";
+import { getPlaythrough, getStoryRecap } from "@/lib/api/game";
+import { getSavedStory, getStoryRecap as getStoryRecapMock } from "@/lib/mocks/mock";
 
 interface GamePageProps {
   params: { id: string };
@@ -7,8 +8,10 @@ interface GamePageProps {
 
 export default async function GamePage({ params }: GamePageProps) {
   const { id } = await params;
+  // const storySoFar = (await getStoryRecap(id)).story;
   const storySoFar = (await getStoryRecap(id)).story;
-  const { playthroughID, ...currentTurn } = await getSavedStory(id);
+  // const { playthroughID, ...currentTurn } = await getSavedStory(id);
+  const { playthroughID, ...currentTurn } = await getPlaythrough(id);
 
   return (
     <>

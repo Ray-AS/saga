@@ -1,6 +1,6 @@
 import PlaythroughCard from "@/components/PlaythroughCard";
 import StartGameButton from "@/components/StartGameButton";
-import { getPlaythroughList } from "@/lib/mock";
+import { getPlaythroughList } from "@/lib/mocks/mock";
 
 export default async function GameList() {
   const { playthroughs } = await getPlaythroughList();
@@ -12,7 +12,7 @@ export default async function GameList() {
   return (
     <main className="flex flex-col items-center justify-center gap-8">
       <StartGameButton />
-      <section className="flex max-w-xl flex-wrap justify-center gap-8">
+      <section className="flex max-w-3xl flex-wrap justify-center gap-8">
         {playthroughElements}
       </section>
     </main>

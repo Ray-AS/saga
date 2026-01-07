@@ -1,6 +1,6 @@
 "use client";
 
-import { deletePlaythrough } from "@/lib/mock";
+import { deletePlaythrough } from "@/lib/mocks/mock";
 
 export default function PlaythroughDeleteButton({ id }: { id: string }) {
   async function handleDelete() {
