@@ -1,4 +1,4 @@
-import { startGame } from "@/lib/start";
+import { startGame } from "@/lib/helpers/start";
 
 export default function StartGameButton() {
   return (

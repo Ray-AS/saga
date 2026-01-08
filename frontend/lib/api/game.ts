@@ -47,7 +47,6 @@ function toStoryRecap(data: BackendRecap): StoryRecap {
 
 export async function getStoryRecap(id: string) {
   const data = await fetchFromAPI<BackendRecap>(`/game/${id}/story`);
-  console.log(data);
   return toStoryRecap(data);
 }
 
@@ -55,4 +54,11 @@ export async function deletePlaythrough(id: string) {
   await fetchFromAPI<void>(`/game/${id}`, {
     method: "DELETE",
   });
+}
+
+export async function startPlaythrough() {
+  const data = await fetchFromAPI<BackendPlaythroughBasic>(`/game/start`, {
+    method: "POST",
+  });
+  return toPlaythroughBasic(data);
 }
