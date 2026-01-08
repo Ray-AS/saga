@@ -1,4 +1,4 @@
-import { Difficulty, Stat } from "./types";
+import { Difficulty, Intent, Stat, Success } from "./types";
 
 export type BackendPlaythroughSummary = {
   playthrough_id: string;
@@ -18,11 +18,19 @@ interface BackendChoice {
   type: Stat;
 }
 
-export interface BackendPlaythroughBasic {
+export interface BackendChoiceWithIntent extends BackendChoice {
+  intent: Intent
+}
+
+export interface BackendStoryStart {
   playthrough_id: string;
   full: string
   condensed: string
   choices: BackendChoice[]
+}
+
+export interface BackendStoryAdvance extends BackendStoryStart {
+  success: Success
 }
 
 export interface BackendRecap {

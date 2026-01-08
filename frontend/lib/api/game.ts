@@ -1,5 +1,5 @@
-import { BackendListPlaythroughsResponse, BackendPlaythroughBasic, BackendPlaythroughSummary, BackendRecap } from "../models/backend-types";
-import { ListPlaythroughs, PlaythroughBasic, StoryRecap } from "../models/types";
+import { BackendChoiceWithIntent, BackendListPlaythroughsResponse, BackendStoryStart, BackendStoryAdvance, BackendPlaythroughSummary, BackendRecap } from "../models/backend-types";
+import { ChoiceWithIntent, ListPlaythroughs, StoryStart, StoryAdvance, StoryRecap } from "../models/types";
 import { fetchFromAPI } from "./client";
 
 function toListPlaythroughs(data: BackendPlaythroughSummary[]): ListPlaythroughs {
@@ -20,7 +20,7 @@ export async function getPlaythroughList() {
 }
 
 
-function toPlaythroughBasic(data: BackendPlaythroughBasic): PlaythroughBasic {
+function toStoryStart(data: BackendStoryStart): StoryStart {
   return {
     playthroughID: data.playthrough_id,
     full: data.full,
@@ -34,8 +34,8 @@ function toPlaythroughBasic(data: BackendPlaythroughBasic): PlaythroughBasic {
 }
 
 export async function getPlaythrough(id: string) {
-  const data = await fetchFromAPI<BackendPlaythroughBasic>(`/game/${id}`);
-  return toPlaythroughBasic(data);
+  const data = await fetchFromAPI<BackendStoryStart>(`/game/${id}`);
+  return toStoryStart(data);
 }
 
 function toStoryRecap(data: BackendRecap): StoryRecap {
@@ -57,8 +57,37 @@ export async function deletePlaythrough(id: string) {
 }
 
 export async function startPlaythrough() {
-  const data = await fetchFromAPI<BackendPlaythroughBasic>(`/game/start`, {
+  const data = await fetchFromAPI<BackendStoryStart>(`/game/start`, {
     method: "POST",
   });
-  return toPlaythroughBasic(data);
+  return toStoryStart(data);
+}
+
+function toBackendChoiceWithIntent(choice: ChoiceWithIntent): BackendChoiceWithIntent {
+  return {
+    ...choice,
+    choice_description: choice.choiceDescription,
+  }
+}
+
+function toStoryAdvance(data: BackendStoryAdvance): StoryAdvance {
+  return {
+    playthroughID: data.playthrough_id,
+    full: data.full,
+    condensed: data.condensed,
+    success: data.success,
+    choices: data.choices.map(c => ({
+      choiceDescription: c.choice_description,
+      difficulty: c.difficulty,
+      type: c.type,
+    })),
+  };
+}
+
+export async function advancePlaythrough(id: string, choice: ChoiceWithIntent) {
+  const data = await fetchFromAPI<BackendStoryAdvance>(`/game/${id}/choose`, {
+    method: "POST",
+    body: JSON.stringify(toBackendChoiceWithIntent(choice)),
+  });
+  return toStoryAdvance(data);
 }

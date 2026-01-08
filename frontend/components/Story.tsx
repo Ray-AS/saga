@@ -1,9 +1,10 @@
 "use client";
 
-import { Choice, StoryWithoutID } from "@/lib/models/types";
+import { Choice, ChoiceWithIntent, Intent, StoryWithoutID } from "@/lib/models/types";
 import { useState } from "react";
 import ChoiceButton from "./ChoiceButton";
 import { getStoryTurn } from "@/lib/mocks/mock";
+import { advancePlaythrough } from "@/lib/api/game";
 
 interface StoryProps {
   id: string;
@@ -31,7 +32,12 @@ export default function Story({ id, initialStory, initialTurn }: StoryProps) {
   ));
 
   async function handleChoice(choice: Choice) {
-    const data = await getStoryTurn(id, choice);
+    // const data = await getStoryTurn(id, choice);
+    const choiceComplete: ChoiceWithIntent = {
+      ...choice,
+      intent: Intent.CAREFUL
+    }
+    const data = await advancePlaythrough(id, choiceComplete);
     setStory((prev) => [...prev, turn.full]);
     setTurn({
       full: data.full,

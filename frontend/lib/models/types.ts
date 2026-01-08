@@ -28,9 +28,13 @@ export enum Success {
 }
 
 export interface Choice {
-  readonly choiceDescription: string;
-  readonly difficulty: Difficulty;
-  readonly type: Stat;
+  choiceDescription: string;
+  difficulty: Difficulty;
+  type: Stat;
+}
+
+export interface ChoiceWithIntent extends Choice {
+  intent: Intent
 }
 
 export interface PlaythroughSummary {
@@ -67,9 +71,13 @@ export interface ListPlaythroughs {
   readonly playthroughs: PlaythroughSummary[];
 }
 
-export interface PlaythroughBasic {
-  playthroughID: string;
-  full: string
-  condensed: string
-  choices: Choice[]
-}
+// export interface StoryStart {
+//   playthroughID: string;
+//   full: string
+//   condensed: string
+//   choices: Choice[]
+// }
+
+// export interface StoryAdvance extends StoryStart {
+//   success: Success
+// }
