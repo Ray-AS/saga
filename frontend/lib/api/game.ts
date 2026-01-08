@@ -50,3 +50,9 @@ export async function getStoryRecap(id: string) {
   console.log(data);
   return toStoryRecap(data);
 }
+
+export async function deletePlaythrough(id: string) {
+  await fetchFromAPI<void>(`/game/${id}`, {
+    method: "DELETE",
+  });
+}

@@ -24,7 +24,7 @@ class DBUploader:
 
         if session_id != '':
             game_session = (
-                self.db.query(GameSession.id).filter_by(id=int(session_id)).first()
+                self.db.query(GameSession).filter_by(id=int(session_id)).first()
             )
 
             if game_session is None:

@@ -1,4 +1,5 @@
 from fastapi import Body, Depends, FastAPI, HTTPException, Path, status
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 
 from backend.adapters.service import GameService
@@ -16,6 +17,16 @@ from backend.models.api import (
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        'http://localhost:3000',
+    ],
+    allow_credentials=True,
+    allow_methods=['*'],
+    allow_headers=['*'],
+)
 
 
 # dependency function for database
