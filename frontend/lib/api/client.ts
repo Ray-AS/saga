@@ -1,5 +1,6 @@
 const BACKEND_URL = process.env.BACKEND_URL ?? "http://localhost:8000";
 
+// Generic function to perform GET/POST/DELETE requests to FastAPI backend
 export async function fetchFromAPI<T>(
   path: string,
   options: RequestInit = {},

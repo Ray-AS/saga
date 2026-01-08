@@ -7,6 +7,7 @@ import { deletePlaythrough } from "@/lib/api/game";
 export default function PlaythroughDeleteButton({ id }: { id: string }) {
   const router = useRouter();
 
+  // Send delete request to backend, then refresh the route to sync in frontend
   async function handleDelete() {
     // const { status, response } = await deletePlaythroughMock(id);
     // console.log(status, response.message);

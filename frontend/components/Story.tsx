@@ -3,8 +3,8 @@
 import { Choice, ChoiceWithIntent, Intent, StoryWithoutID } from "@/lib/models/types";
 import { useState } from "react";
 import ChoiceButton from "./ChoiceButton";
-// import { getStoryTurn } from "@/lib/mocks/mock";
 import { advancePlaythrough } from "@/lib/api/game";
+// import { getStoryTurn } from "@/lib/mocks/mock";
 
 interface StoryProps {
   id: string;
@@ -13,6 +13,7 @@ interface StoryProps {
 }
 
 export default function Story({ id, initialStory, initialTurn }: StoryProps) {
+  // Save fetched story in state and keep story updates in state so it does not need to be fetched from api each time
   const [story, setStory] = useState(initialStory);
   const [turn, setTurn] = useState(initialTurn);
 
@@ -21,6 +22,7 @@ export default function Story({ id, initialStory, initialTurn }: StoryProps) {
       {s}
     </p>
   ));
+  // Display current turn's story as well
   storyElements.push(
     <p key={storyElements.length} className="my-4 indent-8">
       {turn.full}
@@ -33,12 +35,16 @@ export default function Story({ id, initialStory, initialTurn }: StoryProps) {
 
   async function handleChoice(choice: Choice) {
     // const data = await getStoryTurn(id, choice);
+    // Set default intent to "careful" for now
+    // TODO: add intent choosing functionality
     const choiceComplete: ChoiceWithIntent = {
       ...choice,
       intent: Intent.CAREFUL
     }
     const data = await advancePlaythrough(id, choiceComplete);
+    // Push currently completed turn's story onto story state
     setStory((prev) => [...prev, turn.full]);
+    // Update current turn with the next turn
     setTurn({
       full: data.full,
       condensed: data.condensed,
