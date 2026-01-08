@@ -1,16 +1,16 @@
-const BACKEND_URL = process.env.BACKEND_URL ?? 'http://localhost:8000';
+const BACKEND_URL = process.env.BACKEND_URL ?? "http://localhost:8000";
 
 export async function fetchFromAPI<T>(
   path: string,
-  options: RequestInit = {}
+  options: RequestInit = {},
 ): Promise<T> {
   const res = await fetch(`${BACKEND_URL}${path}`, {
     ...options,
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
       ...(options.headers || {}),
     },
-    cache: 'no-store',
+    cache: "no-store",
   });
 
   if (!res.ok) {

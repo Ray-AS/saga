@@ -1,39 +1,39 @@
 import { Difficulty, Intent, Stat, Success } from "./types";
 
 export type BackendPlaythroughSummary = {
-  playthrough_id: string;
-  act: "SETUP" | "ESCALATION" | "RESOLUTION";
-  progress: number;
-  can_end: boolean;
-  summary: string;
+  readonly playthrough_id: string;
+  readonly act: "SETUP" | "ESCALATION" | "RESOLUTION";
+  readonly progress: number;
+  readonly can_end: boolean;
+  readonly summary: string;
 };
 
 export type BackendListPlaythroughsResponse = {
-  playthroughs: BackendPlaythroughSummary[];
+  readonly playthroughs: BackendPlaythroughSummary[];
 };
 
 interface BackendChoice {
-  choice_description: string;
-  difficulty: Difficulty;
-  type: Stat;
+  readonly choice_description: string;
+  readonly difficulty: Difficulty;
+  readonly type: Stat;
 }
 
 export interface BackendChoiceWithIntent extends BackendChoice {
-  intent: Intent
+  readonly intent: Intent;
 }
 
 export interface BackendStoryStart {
-  playthrough_id: string;
-  full: string
-  condensed: string
-  choices: BackendChoice[]
+  readonly playthrough_id: string;
+  readonly full: string;
+  readonly condensed: string;
+  readonly choices: BackendChoice[];
 }
 
 export interface BackendStoryAdvance extends BackendStoryStart {
-  success: Success
+  readonly success: Success;
 }
 
 export interface BackendRecap {
-  playthrough_id: string;
-  story: string[];
+  readonly playthrough_id: string;
+  readonly story: string[];
 }

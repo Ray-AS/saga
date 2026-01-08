@@ -1,8 +1,23 @@
-import { BackendChoiceWithIntent, BackendListPlaythroughsResponse, BackendStoryStart, BackendStoryAdvance, BackendPlaythroughSummary, BackendRecap } from "../models/backend-types";
-import { ChoiceWithIntent, ListPlaythroughs, StoryStart, StoryAdvance, StoryRecap } from "../models/types";
+import {
+  BackendChoiceWithIntent,
+  BackendListPlaythroughsResponse,
+  BackendStoryStart,
+  BackendStoryAdvance,
+  BackendPlaythroughSummary,
+  BackendRecap,
+} from "../models/backend-types";
+import {
+  ChoiceWithIntent,
+  ListPlaythroughs,
+  StoryStart,
+  StoryAdvance,
+  StoryRecap,
+} from "../models/types";
 import { fetchFromAPI } from "./client";
 
-function toListPlaythroughs(data: BackendPlaythroughSummary[]): ListPlaythroughs {
+function toListPlaythroughs(
+  data: BackendPlaythroughSummary[],
+): ListPlaythroughs {
   return {
     playthroughs: data.map((p) => ({
       playthroughID: p.playthrough_id,
@@ -19,13 +34,12 @@ export async function getPlaythroughList() {
   return toListPlaythroughs(data.playthroughs);
 }
 
-
 function toStoryStart(data: BackendStoryStart): StoryStart {
   return {
     playthroughID: data.playthrough_id,
     full: data.full,
     condensed: data.condensed,
-    choices: data.choices.map(c => ({
+    choices: data.choices.map((c) => ({
       choiceDescription: c.choice_description,
       difficulty: c.difficulty,
       type: c.type,
@@ -41,7 +55,7 @@ export async function getPlaythrough(id: string) {
 function toStoryRecap(data: BackendRecap): StoryRecap {
   return {
     playthroughID: data.playthrough_id,
-    story: data.story
+    story: data.story,
   };
 }
 
@@ -63,11 +77,13 @@ export async function startPlaythrough() {
   return toStoryStart(data);
 }
 
-function toBackendChoiceWithIntent(choice: ChoiceWithIntent): BackendChoiceWithIntent {
+function toBackendChoiceWithIntent(
+  choice: ChoiceWithIntent,
+): BackendChoiceWithIntent {
   return {
     ...choice,
     choice_description: choice.choiceDescription,
-  }
+  };
 }
 
 function toStoryAdvance(data: BackendStoryAdvance): StoryAdvance {
@@ -76,7 +92,7 @@ function toStoryAdvance(data: BackendStoryAdvance): StoryAdvance {
     full: data.full,
     condensed: data.condensed,
     success: data.success,
-    choices: data.choices.map(c => ({
+    choices: data.choices.map((c) => ({
       choiceDescription: c.choice_description,
       difficulty: c.difficulty,
       type: c.type,

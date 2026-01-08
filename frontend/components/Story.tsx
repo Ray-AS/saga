@@ -3,7 +3,7 @@
 import { Choice, ChoiceWithIntent, Intent, StoryWithoutID } from "@/lib/models/types";
 import { useState } from "react";
 import ChoiceButton from "./ChoiceButton";
-import { getStoryTurn } from "@/lib/mocks/mock";
+// import { getStoryTurn } from "@/lib/mocks/mock";
 import { advancePlaythrough } from "@/lib/api/game";
 
 interface StoryProps {

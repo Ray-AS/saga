@@ -1,8 +1,8 @@
 "use client";
 
-import { useRouter } from "next/navigation"
+import { useRouter } from "next/navigation";
 import { deletePlaythrough } from "@/lib/api/game";
-import { deletePlaythrough as deletePlaythroughMock } from "@/lib/mocks/mock";
+// import { deletePlaythrough as deletePlaythroughMock } from "@/lib/mocks/mock";
 
 export default function PlaythroughDeleteButton({ id }: { id: string }) {
   const router = useRouter();
