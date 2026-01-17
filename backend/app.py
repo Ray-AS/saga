@@ -169,7 +169,13 @@ def get_playthrough_outcome(
     service: GameService = Depends(get_game_service),
 ):
     try:
-        return service.summarize_game(id)
+        response = service.summarize_game(id)
+        if not response:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail=f'Playthrough {id} has not yet ended.',
+            )
+        return response
     except KeyError:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
