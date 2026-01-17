@@ -1,4 +1,4 @@
-import { Difficulty, Intent, Stat, Success } from "./types";
+import { Difficulty, Intent, Stat, StatBlock, Success } from "./types";
 
 export type BackendPlaythroughSummary = {
   readonly playthrough_id: string;
@@ -36,4 +36,10 @@ export interface BackendStoryAdvance extends BackendStoryStart {
 export interface BackendRecap {
   readonly playthrough_id: string;
   readonly story: string[];
+}
+
+export interface BackendEnding {
+  readonly playthrough_summary: string
+  readonly character_summary: string
+  readonly stat_summary: StatBlock
 }

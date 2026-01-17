@@ -4,12 +4,14 @@ import {
   toStoryRecap,
   toBackendChoiceWithIntent,
   toStoryAdvance,
+  toEnding,
 } from "../helpers/convert";
 import {
   BackendListPlaythroughsResponse,
   BackendStoryStart,
   BackendStoryAdvance,
   BackendRecap,
+  BackendEnding,
 } from "../models/backend-types";
 import { ChoiceWithIntent } from "../models/types";
 import { fetchFromAPI } from "./client";
@@ -48,4 +50,9 @@ export async function advancePlaythrough(id: string, choice: ChoiceWithIntent) {
     body: JSON.stringify(toBackendChoiceWithIntent(choice)),
   });
   return toStoryAdvance(data);
+}
+
+export async function getEndingSummary(id: string) {
+  const data = await fetchFromAPI<BackendEnding>(`/game/${id}/ending`);
+  return toEnding(data);
 }

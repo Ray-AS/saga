@@ -1,5 +1,6 @@
 import {
   BackendChoiceWithIntent,
+  BackendEnding,
   BackendPlaythroughSummary,
   BackendRecap,
   BackendStoryAdvance,
@@ -11,6 +12,7 @@ import {
   StoryRecap,
   ChoiceWithIntent,
   StoryAdvance,
+  Ending,
 } from "../models/types";
 
 // Convert Python dicts to matching TS Objects
@@ -69,5 +71,13 @@ export function toStoryAdvance(data: BackendStoryAdvance): StoryAdvance {
       difficulty: c.difficulty,
       type: c.type,
     })),
+  };
+}
+
+export function toEnding(data: BackendEnding): Ending {
+  return {
+    playthrough: data.playthrough_summary,
+    character: data.character_summary,
+    stats: data.stat_summary,
   };
 }

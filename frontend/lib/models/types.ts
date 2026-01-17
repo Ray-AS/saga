@@ -27,6 +27,13 @@ export enum Success {
   C_SUCCESS = "CRITICAL SUCCESS",
 }
 
+export interface StatBlock {
+  readonly force: number
+  readonly guile: number
+  readonly influence: number
+  readonly insight: number
+}
+
 export interface Choice {
   readonly choiceDescription: string;
   readonly difficulty: Difficulty;
@@ -69,4 +76,10 @@ export interface StoryRecap {
 
 export interface ListPlaythroughs {
   readonly playthroughs: PlaythroughSummary[];
+}
+
+export interface Ending {
+  readonly playthrough: string
+  readonly character: string
+  readonly stats: StatBlock
 }
