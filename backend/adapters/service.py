@@ -105,7 +105,7 @@ class GameService:
     def summarize_game(self, session_id: str):
         state = self.get_session(session_id)
 
-        if not state.narrative.allow_ending:
+        if not state.current_choices:
             return False
 
         playthrough_summary, character_summary = self.storyteller.summarize_playthrough(
