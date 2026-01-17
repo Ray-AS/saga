@@ -2,16 +2,16 @@
 
 import {
   Choice,
-  // ChoiceWithIntent,
-  // Intent,
+  ChoiceWithIntent,
+  Intent,
   StoryWithoutID,
 } from "@/lib/models/types";
 import { useState } from "react";
 import ChoiceButton from "./ChoiceButton";
-// import { advancePlaythrough } from "@/lib/api/game";
+import { advancePlaythrough } from "@/lib/api/game";
 import StoryEndingButton from "./StoryEndingButton";
 import useTypewriter from "./useTypewriter";
-import { getStoryTurn } from "@/lib/mocks/mock";
+// import { getStoryTurn } from "@/lib/mocks/mock";
 import useChoiceBuffer from "./useChoiceBuffer";
 
 interface StoryProps {
@@ -87,15 +87,15 @@ export default function Story({ id, initialStory, initialTurn }: StoryProps) {
     await new Promise((resolve) => setTimeout(resolve, 600));
 
     setIsLoading(true);
-    const nextTurn = await getStoryTurn(id, choice);
+    // const nextTurn = await getStoryTurn(id, choice);
     // Set default intent to "careful" for now
     // TODO: add intent choosing functionality
-    // const choiceComplete: ChoiceWithIntent = {
-    //   ...choice,
-    //   intent: Intent.CAREFUL,
-    // };
+    const choiceComplete: ChoiceWithIntent = {
+      ...choice,
+      intent: Intent.CAREFUL,
+    };
 
-    // const nextTurn = await advancePlaythrough(id, choiceComplete);
+    const nextTurn = await advancePlaythrough(id, choiceComplete);
     // Push currently completed turn's story onto story state
     setStory((prev) => [...prev, turn.full]);
     // Update current turn with the next turn
