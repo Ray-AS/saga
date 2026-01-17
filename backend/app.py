@@ -6,6 +6,7 @@ from backend.adapters.service import GameService
 from backend.database.db import Base, SessionLocal, engine
 from backend.models.api import (
     ChoiceInfo,
+    EndingSummaryResponse,
     ListPlaythroughsResponse,
     PlaythroughSummary,
     StoryAdvanceResponse,
@@ -160,23 +161,17 @@ def get_story_so_far(
 
 @app.get(
     '/game/{id}/ending',
-    response_model=StoryRecapResponse,
+    response_model=EndingSummaryResponse,
     summary='Get a summary of the playthrough and its consequences',
 )
 def get_playthrough_outcome(
     id: str = Path(..., description='The ID of the playthrough to retrieve'),
     service: GameService = Depends(get_game_service),
 ):
-    # try:
-    #     state = service.get_session(id)
-    # except KeyError:
-    #     raise HTTPException(
-    #         status_code=status.HTTP_404_NOT_FOUND, detail=f'Playthrough {id} not found'
-    #     )
-
-    # return StoryRecapResponse(
-    #     playthrough_id=id,
-    #     story=state.story[:-1] if state.story else [],
-    # )
-
-    pass
+    try:
+        return service.summarize_game(id)
+    except KeyError:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f'Playthrough {id} not found',
+        )

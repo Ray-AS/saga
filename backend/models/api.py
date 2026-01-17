@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-from backend.models.game import Choice, Intent, Success
+from backend.models.game import Choice, Intent, StatBlock, Success
 
 
 class StoryStartResponse(BaseModel):
@@ -33,3 +33,9 @@ class PlaythroughSummary(BaseModel):
 
 class ListPlaythroughsResponse(BaseModel):
     playthroughs: list[PlaythroughSummary] = []
+
+
+class EndingSummaryResponse(BaseModel):
+    playthrough_summary: str
+    character_summary: str
+    stat_summary: StatBlock

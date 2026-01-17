@@ -7,6 +7,7 @@ from backend.game.state import PlaythroughState
 from backend.llm.storyteller import Storyteller
 from backend.models.api import (
     ChoiceInfo,
+    EndingSummaryResponse,
     StoryAdvanceResponse,
     StoryStartResponse,
 )
@@ -102,4 +103,14 @@ class GameService:
         )
 
     def summarize_game(self, session_id: str):
-        pass
+        state = self.get_session(session_id)
+
+        playthrough_summary, character_summary = self.storyteller.summarize_playthrough(
+            state.history
+        )
+
+        return EndingSummaryResponse(
+            playthrough_summary=playthrough_summary,
+            character_summary=character_summary,
+            stat_summary=state.character.stats,
+        )
