@@ -37,7 +37,7 @@ export default function Story({ id, initialStory, initialTurn }: StoryProps) {
     </p>,
   );
 
-  if(gameOver) {
+  if (gameOver) {
     storyElements.push(
       <p key={storyElements.length} className="my-4 indent-8">
         The last page turns...
@@ -67,8 +67,7 @@ export default function Story({ id, initialStory, initialTurn }: StoryProps) {
       choices: data.choices,
     });
 
-    if (data.choices.length === 0)
-      setGameOver(true);
+    if (data.choices.length === 0) setGameOver(true);
   }
 
   return (

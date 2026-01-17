@@ -28,10 +28,10 @@ export enum Success {
 }
 
 export interface StatBlock {
-  readonly force: number
-  readonly guile: number
-  readonly influence: number
-  readonly insight: number
+  readonly force: number;
+  readonly guile: number;
+  readonly influence: number;
+  readonly insight: number;
 }
 
 export interface Choice {
@@ -79,7 +79,7 @@ export interface ListPlaythroughs {
 }
 
 export interface Ending {
-  readonly playthrough: string
-  readonly character: string
-  readonly stats: StatBlock
+  readonly playthrough: string;
+  readonly character: string;
+  readonly stats: StatBlock;
 }

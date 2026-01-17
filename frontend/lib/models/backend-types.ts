@@ -39,7 +39,7 @@ export interface BackendRecap {
 }
 
 export interface BackendEnding {
-  readonly playthrough_summary: string
-  readonly character_summary: string
-  readonly stat_summary: StatBlock
+  readonly playthrough_summary: string;
+  readonly character_summary: string;
+  readonly stat_summary: StatBlock;
 }

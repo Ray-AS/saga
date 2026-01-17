@@ -13,7 +13,10 @@ export default async function EndingPage({ params }: EndingPageProps) {
   return (
     <main>
       <TextSummary summaryHeader={"Who You Became"} summary={character} />
-      <TextSummary summaryHeader={"The World You Left Behind"} summary={playthrough} />
+      <TextSummary
+        summaryHeader={"The World You Left Behind"}
+        summary={playthrough}
+      />
       <StatSummary statSummary={stats} />
     </main>
   );
