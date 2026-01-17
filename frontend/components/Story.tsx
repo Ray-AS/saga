@@ -25,100 +25,104 @@ export default function Story({ id, initialStory, initialTurn }: StoryProps) {
   const [story, setStory] = useState(initialStory);
   const [turn, setTurn] = useState(initialTurn);
   const [gameOver, setGameOver] = useState(turn.choices.length === 0);
+  // Track whether a request is currently being processed in the backend
   const [isLoading, setIsLoading] = useState(false);
-  const turnText = useTypewriter(turn.full, 10, turn.full + story.length);
-  const choiceBufferOptions =
-    turnText.length >= turn.full.length ? turn.choices : [];
-  const availableChoices: Choice[] = useChoiceBuffer(choiceBufferOptions);
-
-  const [displayedChoices, setDisplayedChoices] = useState<Choice[]>(
-    turn.choices,
-  );
+  // Track whether a choice has been clicked and fade-out animation is in progress
   const [isExiting, setIsExiting] = useState(false);
 
-  const storyElements = story.map((s, i) => (
-    <p key={i} className="my-4 indent-8">
-      {s}
-    </p>
-  ));
+  // Use a hook to buffer the story output letter-by-letter instead of all the text appearing abruptly
+  // TODO: Add a skip button to display all the text at once if user desires
+  const turnText = useTypewriter(turn.full, 10, turn.full + story.length);
+  // Only populate choices when the story has finished outputting
+  const bufferedChoices =
+    turnText.length >= turn.full.length ? turn.choices : [];
+  const availableChoices: Choice[] = useChoiceBuffer(bufferedChoices);
 
-  // Display current turn's story as well
-  storyElements.push(
-    <p key={storyElements.length} className="my-4 indent-8">
-      {turnText}
-    </p>,
-  );
+  const renderStory = () => {
+    const elements = story.map((s, i) => (
+      <p key={i} className="my-4 indent-8">
+        {s}
+      </p>
+    ));
 
-  if (isLoading) {
-    storyElements.push(
-      <p key={storyElements.length} className="my-4 indent-8">
-        The world shifts…
+    // Display current turn's story as well
+    elements.push(
+      <p key={elements.length} className="my-4 indent-8">
+        {turnText}
       </p>,
     );
-  }
 
-  if (gameOver) {
-    storyElements.push(
-      <p key={storyElements.length} className="my-4 indent-8">
-        The last page turns...
-      </p>,
-    );
-  }
+    // Add basic loading state while data is being fetched from API
+    if (isLoading)
+      elements.push(
+        <p key={elements.length} className="my-4 indent-8">
+          The world shifts…
+        </p>,
+      );
 
-  const choiceElements = availableChoices.map((c, i) => (
-    <ChoiceButton
-      key={i}
-      choice={c}
-      handleClick={handleChoice}
-      disabled={turnText.length < turn.full.length || isLoading}
-      exiting={isExiting}
-    />
-  ));
+    // Add last line if playthrough has ended
+    if (gameOver)
+      elements.push(
+        <p key={elements.length} className="my-4 indent-8">
+          The last page turns...
+        </p>,
+      );
+
+    return elements;
+  };
+
+  const renderChoices = () =>
+    availableChoices.map((c, i) => (
+      <ChoiceButton
+        key={i}
+        choice={c}
+        handleClick={handleChoice}
+        disabled={turnText.length < turn.full.length || isLoading}
+        exiting={isExiting}
+      />
+    ));
 
   async function handleChoice(choice: Choice) {
     setIsExiting(true);
     await new Promise((resolve) => setTimeout(resolve, 600));
-    setDisplayedChoices([]);
 
     setIsLoading(true);
-    const data = await getStoryTurn(id, choice);
+    const nextTurn = await getStoryTurn(id, choice);
     // Set default intent to "careful" for now
     // TODO: add intent choosing functionality
     // const choiceComplete: ChoiceWithIntent = {
     //   ...choice,
     //   intent: Intent.CAREFUL,
     // };
-    // const data = await advancePlaythrough(id, choiceComplete);
+
+    // const nextTurn = await advancePlaythrough(id, choiceComplete);
     // Push currently completed turn's story onto story state
     setStory((prev) => [...prev, turn.full]);
     // Update current turn with the next turn
     setTurn({
-      full: data.full,
-      condensed: data.condensed,
-      choices: data.choices,
+      full: nextTurn.full,
+      condensed: nextTurn.condensed,
+      choices: nextTurn.choices,
     });
 
-    setDisplayedChoices(data.choices);
     setIsExiting(false);
     setIsLoading(false);
 
-    if (data.choices.length === 0) setGameOver(true);
+    if (nextTurn.choices.length === 0) setGameOver(true);
   }
 
   return (
     <main>
       <section className="mx-4 mb-10 p-6 shadow-lg shadow-neutral-950">
-        {storyElements}
+        {renderStory()}
       </section>
-      {!gameOver ? (
-        turnText.length >= turn.full.length && (
-          <section className="mx-4 mb-20">{choiceElements}</section>
-        )
-      ) : (
-        <section className="mx-4 mb-20">
+      <section className="mx-4 mb-20">
+        {gameOver ? (
           <StoryEndingButton id={id} />
-        </section>
-      )}
+        ) : (
+          turnText.length >= turn.full.length && renderChoices()
+        )}
+      </section>
     </main>
   );
 }

@@ -89,9 +89,9 @@ export async function getStoryTurn(id: string, choice: Choice) {
   await new Promise((r) => setTimeout(r, 500));
   return {
     ...mockTurn,
-    full: mockTurn.full || "", 
+    full: mockTurn.full || "",
     choices: [...mockTurn.choices],
-  };;
+  };
 }
 
 export const getSavedStory = (id: string) => getStoryStart();
