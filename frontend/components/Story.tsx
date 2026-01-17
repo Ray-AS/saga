@@ -1,9 +1,15 @@
 "use client";
 
-import { Choice, ChoiceWithIntent, Intent, StoryWithoutID } from "@/lib/models/types";
+import {
+  Choice,
+  ChoiceWithIntent,
+  Intent,
+  StoryWithoutID,
+} from "@/lib/models/types";
 import { useState } from "react";
 import ChoiceButton from "./ChoiceButton";
 import { advancePlaythrough } from "@/lib/api/game";
+import StoryEndingButton from "./StoryEndingButton";
 // import { getStoryTurn } from "@/lib/mocks/mock";
 
 interface StoryProps {
@@ -16,6 +22,7 @@ export default function Story({ id, initialStory, initialTurn }: StoryProps) {
   // Save fetched story in state and keep story updates in state so it does not need to be fetched from api each time
   const [story, setStory] = useState(initialStory);
   const [turn, setTurn] = useState(initialTurn);
+  const [gameOver, setGameOver] = useState(false);
 
   const storyElements = story.map((s, i) => (
     <p key={i} className="my-4 indent-8">
@@ -39,8 +46,8 @@ export default function Story({ id, initialStory, initialTurn }: StoryProps) {
     // TODO: add intent choosing functionality
     const choiceComplete: ChoiceWithIntent = {
       ...choice,
-      intent: Intent.CAREFUL
-    }
+      intent: Intent.CAREFUL,
+    };
     const data = await advancePlaythrough(id, choiceComplete);
     // Push currently completed turn's story onto story state
     setStory((prev) => [...prev, turn.full]);
@@ -50,6 +57,8 @@ export default function Story({ id, initialStory, initialTurn }: StoryProps) {
       condensed: data.condensed,
       choices: data.choices,
     });
+
+    if (data.choices.length === 0) setGameOver(true);
   }
 
   return (
@@ -57,7 +66,14 @@ export default function Story({ id, initialStory, initialTurn }: StoryProps) {
       <section className="mx-4 mb-10 p-6 shadow-lg shadow-neutral-950">
         {storyElements}
       </section>
-      <section className="mx-4 mb-20">{choiceElements}</section>
+      {!gameOver ? (
+        <section className="mx-4 mb-20">{choiceElements}</section>
+      ) : (
+        <section>
+          <p>The last page turns...</p>
+          <StoryEndingButton id={id} />
+        </section>
+      )}
     </main>
   );
 }
