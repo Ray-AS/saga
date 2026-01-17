@@ -12,6 +12,7 @@ import ChoiceButton from "./ChoiceButton";
 import StoryEndingButton from "./StoryEndingButton";
 import useTypewriter from "./useTypewriter";
 import { getStoryTurn } from "@/lib/mocks/mock";
+import useChoiceBuffer from "./useChoiceBuffer";
 
 interface StoryProps {
   id: string;
@@ -25,7 +26,15 @@ export default function Story({ id, initialStory, initialTurn }: StoryProps) {
   const [turn, setTurn] = useState(initialTurn);
   const [gameOver, setGameOver] = useState(turn.choices.length === 0);
   const [isLoading, setIsLoading] = useState(false);
-  const turnText = useTypewriter(turn.full, 10);
+  const turnText = useTypewriter(turn.full, 10, turn.full + story.length);
+  const choiceBufferOptions =
+    turnText.length >= turn.full.length ? turn.choices : [];
+  const availableChoices: Choice[] = useChoiceBuffer(choiceBufferOptions);
+
+  const [displayedChoices, setDisplayedChoices] = useState<Choice[]>(
+    turn.choices,
+  );
+  const [isExiting, setIsExiting] = useState(false);
 
   const storyElements = story.map((s, i) => (
     <p key={i} className="my-4 indent-8">
@@ -56,11 +65,21 @@ export default function Story({ id, initialStory, initialTurn }: StoryProps) {
     );
   }
 
-  const choiceElements = turn.choices.map((c, i) => (
-    <ChoiceButton key={i} choice={c} handleClick={handleChoice} />
+  const choiceElements = availableChoices.map((c, i) => (
+    <ChoiceButton
+      key={i}
+      choice={c}
+      handleClick={handleChoice}
+      disabled={turnText.length < turn.full.length || isLoading}
+      exiting={isExiting}
+    />
   ));
 
   async function handleChoice(choice: Choice) {
+    setIsExiting(true);
+    await new Promise((resolve) => setTimeout(resolve, 600));
+    setDisplayedChoices([]);
+
     setIsLoading(true);
     const data = await getStoryTurn(id, choice);
     // Set default intent to "careful" for now
@@ -78,7 +97,9 @@ export default function Story({ id, initialStory, initialTurn }: StoryProps) {
       condensed: data.condensed,
       choices: data.choices,
     });
-    
+
+    setDisplayedChoices(data.choices);
+    setIsExiting(false);
     setIsLoading(false);
 
     if (data.choices.length === 0) setGameOver(true);
@@ -90,7 +111,9 @@ export default function Story({ id, initialStory, initialTurn }: StoryProps) {
         {storyElements}
       </section>
       {!gameOver ? (
-        <section className="mx-4 mb-20">{choiceElements}</section>
+        turnText.length >= turn.full.length && (
+          <section className="mx-4 mb-20">{choiceElements}</section>
+        )
       ) : (
         <section className="mx-4 mb-20">
           <StoryEndingButton id={id} />

@@ -2,21 +2,32 @@
 
 import { useEffect, useState } from "react";
 
-export default function useTypewriter(text: string, speed: number = 20) {
+export default function useTypewriter(text: string, speed: number = 20, turnID?: string) {
   const [displayed, setDisplayed] = useState("");
 
   useEffect(() => {
-    let i = 0;
     setDisplayed("");
-
+    if(!text) return;
+    
+    let i = 0;
     const interval = setInterval(() => {
-      setDisplayed(prev => prev + text[i]);
+      const nextChar = text[i];
+      
+      if (typeof nextChar === "undefined") {
+        clearInterval(interval);
+        return;
+      }
+
+      setDisplayed((prev) => prev + nextChar);
       i++;
-      if (i >= text.length) clearInterval(interval);
+      
+      if (i >= text.length) {
+        clearInterval(interval);
+      }
     }, speed);
 
     return () => clearInterval(interval);
-  }, [text, speed]);
+  }, [text, speed, turnID]);
 
   return displayed;
 }
