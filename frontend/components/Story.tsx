@@ -8,9 +8,10 @@ import {
 } from "@/lib/models/types";
 import { useState } from "react";
 import ChoiceButton from "./ChoiceButton";
-import { advancePlaythrough } from "@/lib/api/game";
+// import { advancePlaythrough } from "@/lib/api/game";
 import StoryEndingButton from "./StoryEndingButton";
-// import { getStoryTurn } from "@/lib/mocks/mock";
+import useTypewriter from "./useTypewriter";
+import { getStoryTurn } from "@/lib/mocks/mock";
 
 interface StoryProps {
   id: string;
@@ -23,6 +24,8 @@ export default function Story({ id, initialStory, initialTurn }: StoryProps) {
   const [story, setStory] = useState(initialStory);
   const [turn, setTurn] = useState(initialTurn);
   const [gameOver, setGameOver] = useState(turn.choices.length === 0);
+  const [isLoading, setIsLoading] = useState(false);
+  const turnText = useTypewriter(turn.full, 10);
 
   const storyElements = story.map((s, i) => (
     <p key={i} className="my-4 indent-8">
@@ -33,9 +36,17 @@ export default function Story({ id, initialStory, initialTurn }: StoryProps) {
   // Display current turn's story as well
   storyElements.push(
     <p key={storyElements.length} className="my-4 indent-8">
-      {turn.full}
+      {turnText}
     </p>,
   );
+
+  if (isLoading) {
+    storyElements.push(
+      <p key={storyElements.length} className="my-4 indent-8">
+        The world shifts…
+      </p>,
+    );
+  }
 
   if (gameOver) {
     storyElements.push(
@@ -50,14 +61,15 @@ export default function Story({ id, initialStory, initialTurn }: StoryProps) {
   ));
 
   async function handleChoice(choice: Choice) {
-    // const data = await getStoryTurn(id, choice);
+    setIsLoading(true);
+    const data = await getStoryTurn(id, choice);
     // Set default intent to "careful" for now
     // TODO: add intent choosing functionality
     const choiceComplete: ChoiceWithIntent = {
       ...choice,
       intent: Intent.CAREFUL,
     };
-    const data = await advancePlaythrough(id, choiceComplete);
+    // const data = await advancePlaythrough(id, choiceComplete);
     // Push currently completed turn's story onto story state
     setStory((prev) => [...prev, turn.full]);
     // Update current turn with the next turn
@@ -66,6 +78,8 @@ export default function Story({ id, initialStory, initialTurn }: StoryProps) {
       condensed: data.condensed,
       choices: data.choices,
     });
+    
+    setIsLoading(false);
 
     if (data.choices.length === 0) setGameOver(true);
   }
