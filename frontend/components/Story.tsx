@@ -2,8 +2,8 @@
 
 import {
   Choice,
-  ChoiceWithIntent,
-  Intent,
+  // ChoiceWithIntent,
+  // Intent,
   StoryWithoutID,
 } from "@/lib/models/types";
 import { useState } from "react";
@@ -65,10 +65,10 @@ export default function Story({ id, initialStory, initialTurn }: StoryProps) {
     const data = await getStoryTurn(id, choice);
     // Set default intent to "careful" for now
     // TODO: add intent choosing functionality
-    const choiceComplete: ChoiceWithIntent = {
-      ...choice,
-      intent: Intent.CAREFUL,
-    };
+    // const choiceComplete: ChoiceWithIntent = {
+    //   ...choice,
+    //   intent: Intent.CAREFUL,
+    // };
     // const data = await advancePlaythrough(id, choiceComplete);
     // Push currently completed turn's story onto story state
     setStory((prev) => [...prev, turn.full]);
