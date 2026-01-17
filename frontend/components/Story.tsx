@@ -67,7 +67,7 @@ export default function Story({ id, initialStory, initialTurn }: StoryProps) {
       choices: data.choices,
     });
 
-    if (turn.choices.length === 0)
+    if (data.choices.length === 0)
       setGameOver(true);
   }
 
