@@ -22,19 +22,28 @@ export default function Story({ id, initialStory, initialTurn }: StoryProps) {
   // Save fetched story in state and keep story updates in state so it does not need to be fetched from api each time
   const [story, setStory] = useState(initialStory);
   const [turn, setTurn] = useState(initialTurn);
-  const [gameOver, setGameOver] = useState(false);
+  const [gameOver, setGameOver] = useState(turn.choices.length === 0);
 
   const storyElements = story.map((s, i) => (
     <p key={i} className="my-4 indent-8">
       {s}
     </p>
   ));
+
   // Display current turn's story as well
   storyElements.push(
     <p key={storyElements.length} className="my-4 indent-8">
       {turn.full}
     </p>,
   );
+
+  if(gameOver) {
+    storyElements.push(
+      <p key={storyElements.length} className="my-4 indent-8">
+        The last page turns...
+      </p>,
+    );
+  }
 
   const choiceElements = turn.choices.map((c, i) => (
     <ChoiceButton key={i} choice={c} handleClick={handleChoice} />
@@ -58,7 +67,8 @@ export default function Story({ id, initialStory, initialTurn }: StoryProps) {
       choices: data.choices,
     });
 
-    if (data.choices.length === 0) setGameOver(true);
+    if (turn.choices.length === 0)
+      setGameOver(true);
   }
 
   return (
@@ -69,8 +79,7 @@ export default function Story({ id, initialStory, initialTurn }: StoryProps) {
       {!gameOver ? (
         <section className="mx-4 mb-20">{choiceElements}</section>
       ) : (
-        <section>
-          <p>The last page turns...</p>
+        <section className="mx-4 mb-20">
           <StoryEndingButton id={id} />
         </section>
       )}
