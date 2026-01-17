@@ -156,3 +156,27 @@ def get_story_so_far(
         playthrough_id=id,
         story=state.story[:-1] if state.story else [],
     )
+
+
+@app.get(
+    '/game/{id}/ending',
+    response_model=StoryRecapResponse,
+    summary='Get a summary of the playthrough and its consequences',
+)
+def get_playthrough_outcome(
+    id: str = Path(..., description='The ID of the playthrough to retrieve'),
+    service: GameService = Depends(get_game_service),
+):
+    # try:
+    #     state = service.get_session(id)
+    # except KeyError:
+    #     raise HTTPException(
+    #         status_code=status.HTTP_404_NOT_FOUND, detail=f'Playthrough {id} not found'
+    #     )
+
+    # return StoryRecapResponse(
+    #     playthrough_id=id,
+    #     story=state.story[:-1] if state.story else [],
+    # )
+
+    pass

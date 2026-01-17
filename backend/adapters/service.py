@@ -100,3 +100,6 @@ class GameService:
             choices=choice_block.choices if not story.is_ending else [],
             success=success,
         )
+
+    def summarize_game(self, session_id: str):
+        pass

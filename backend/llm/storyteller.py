@@ -6,6 +6,11 @@ from backend.llm.client import LLMClient
 from backend.llm.prompts.act import ACT_GUIDELINES
 from backend.llm.prompts.choices import CHOICE_PROMPT
 from backend.llm.prompts.story import STORY_PROMPT_START, STORY_PROMPT_TURN
+from backend.llm.prompts.summary import (
+    PLAYTHROUGH_CHARACTER_PROMPT,
+    PLAYTHROUGH_STORY_PROMPT,
+    STORY_SUMMARY_PROMPT,
+)
 from backend.llm.prompts.system import SYSTEM_PROMPT
 from backend.llm.validation import parse_or_repair
 from backend.models.game import NarrativeState, Success, Turn
@@ -139,7 +144,7 @@ class Storyteller:
             + [
                 {
                     'role': 'user',
-                    'content': 'Provide a 10-15 word, hooking summary of the story so far. Just a sentence, nothing else. DO NOT give any additional text (e.g. "story": or "Here is the summary"). DO NOT elaborate beyond the summary sentence.',
+                    'content': STORY_SUMMARY_PROMPT,
                 }
             ],
             MODEL,
@@ -149,3 +154,46 @@ class Storyteller:
             raise ValueError('LLM did not provide story summary')
 
         return summary_raw.strip()
+
+    def summarize_playthrough(self, history: list[Turn]):
+        messages: list[Message] = [
+            {'role': 'system', 'content': SYSTEM_PROMPT},
+        ]
+
+        for t in history:
+            messages.append({'role': 'user', 'content': t.user})
+            messages.append({'role': 'assistant', 'content': t.ai})
+
+        playthrough_summary_raw = self.client.chat(
+            messages
+            + [
+                {
+                    'role': 'user',
+                    'content': PLAYTHROUGH_STORY_PROMPT,
+                }
+            ],
+            MODEL,
+        )
+
+        if not playthrough_summary_raw:
+            raise ValueError('LLM did not provide story summary')
+
+        playthrough_summary = playthrough_summary_raw.strip()
+
+        character_summary_raw = self.client.chat(
+            messages
+            + [
+                {
+                    'role': 'user',
+                    'content': PLAYTHROUGH_CHARACTER_PROMPT,
+                }
+            ],
+            MODEL,
+        )
+
+        if not character_summary_raw:
+            raise ValueError('LLM did not provide story summary')
+
+        character_summary = character_summary_raw.strip()
+
+        return playthrough_summary, character_summary
