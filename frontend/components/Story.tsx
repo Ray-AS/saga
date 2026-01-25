@@ -55,7 +55,8 @@ export default function Story({ id, initialStory, initialTurn }: StoryProps) {
     // Add basic loading state while data is being fetched from API
     if (isLoading)
       elements.push(
-        <p key={elements.length} className="my-4 indent-8">
+    // transition-all duration-200 ${!isLoading ? "animate-fade-out" : "animate-fade-in
+        <p key={elements.length} className={`my-4 indent-8"}`}>
           The world shifts…
         </p>,
       );
@@ -87,6 +88,7 @@ export default function Story({ id, initialStory, initialTurn }: StoryProps) {
     await new Promise((resolve) => setTimeout(resolve, 600));
 
     setIsLoading(true);
+
     // const nextTurn = await getStoryTurn(id, choice);
     // Set default intent to "careful" for now
     // TODO: add intent choosing functionality
@@ -115,6 +117,11 @@ export default function Story({ id, initialStory, initialTurn }: StoryProps) {
     <main>
       <section className="mx-4 mb-10 p-6 shadow-lg shadow-neutral-950">
         {renderStory()}
+        <button 
+          className="cursor-pointer font-bold text-xl"
+        >
+          -&gt;
+        </button>
       </section>
       <section className="mx-4 mb-20">
         {gameOver ? (

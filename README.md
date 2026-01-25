@@ -8,7 +8,7 @@ Players interact with characters, explore branching storylines, and experience c
 
 ## Demo
 
-![Loading story and making one choice in story](/frontend/public/assets/example.gif)
+![Starting story and making one choice](/assets/example.gif)
 **Live Preview Coming Soon**
 
 ## Table of Contents
@@ -105,6 +105,7 @@ Each of these SQLAlchemy models correspond to a table in the PostgreSQL database
 
 ### UI / UX
 
+- Carouse view vs. full view of story
 - Improve UI (e.g. component libraries, dark mode, polish layout)
 - Ending-specific screen (e.g. summary, tone, character alignment)
 - Progress/dashboard screen (i.e. give details of a playthrough, fun stats)

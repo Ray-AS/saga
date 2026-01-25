@@ -15,12 +15,10 @@ export default function ChoiceButton({
 }: ChoiceProps) {
   return (
     <button
-      // data-difficulty={choice.difficulty}
-      // data-type={choice.type}
       onClick={() => handleClick(choice)}
       disabled={disabled}
       // FIX ENABLED BUTTON STYLING
-      className={`my-2 w-full px-5 py-3 text-left text-white shadow-md shadow-black/75 transition-all duration-200 ${exiting ? "animate-fade-out" : "animate-fade-in"} hover:bg-neutral-800 hover:shadow-black/60 active:translate-y-0.5 disabled:cursor-not-allowed`}
+      className={`my-2 w-full px-5 py-3 cursor-pointer text-left text-white shadow-md shadow-black/75 transition-all duration-200 ${exiting ? "animate-fade-out" : "animate-fade-in"} hover:bg-neutral-800 hover:shadow-black/60 active:translate-y-0.5 disabled:cursor-not-allowed`}
     >
       {choice.choiceDescription}
     </button>
